@@ -68,97 +68,64 @@ jobs:
       name: production
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy stack on VM
-        env:
-          IMAGE_REF: ${{ needs.build_and_push.outputs.image_ref }}
-          APP_ENV_FILE: ${{ secrets.APP_ENV_FILE }}
-          VM_SSH_TARGET: ${{ secrets.VM_SSH_TARGET }}
-          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
-          VM_SSH_KNOWN_HOSTS: ${{ secrets.VM_SSH_KNOWN_HOSTS }}
+      - name: Parse SSH Target
         run: |
-          set -euo pipefail
-
-          DEPLOY_PATH="/opt/ta-aswan"
-          SSH_DIR="$(mktemp -d)"
-          ENV_FILE="$(mktemp)"
-
-          cleanup() {
-            rm -rf "$SSH_DIR"
-            rm -f "$ENV_FILE"
-          }
-          trap cleanup EXIT
-
-          : "${IMAGE_REF:?Missing required environment variable: IMAGE_REF}"
-          : "${APP_ENV_FILE:?Missing required environment variable: APP_ENV_FILE}"
-          : "${VM_SSH_TARGET:?Missing required environment variable: VM_SSH_TARGET}"
-          : "${VM_SSH_KEY:?Missing required environment variable: VM_SSH_KEY}"
-          : "${VM_SSH_KNOWN_HOSTS:?Missing required environment variable: VM_SSH_KNOWN_HOSTS}"
-
-          printf '%s\n' "$VM_SSH_KEY" > "$SSH_DIR/id_ed25519"
-          chmod 600 "$SSH_DIR/id_ed25519"
-          printf '%s\n' "$VM_SSH_KNOWN_HOSTS" > "$SSH_DIR/known_hosts"
-          chmod 644 "$SSH_DIR/known_hosts"
-          printf '%s\n' "$APP_ENV_FILE" > "$ENV_FILE"
-          chmod 600 "$ENV_FILE"
-
-          if [[ ! "$VM_SSH_TARGET" =~ ^([^@]+)@([^:]+):([0-9]+)$ ]]; then
-            echo "VM_SSH_TARGET must use the format user@host:port" >&2
+          if [[ "${{ secrets.VM_SSH_TARGET }}" =~ ^([^@]+)@([^:]+):([0-9]+)$ ]]; then
+            echo "VM_USER=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+            echo "VM_HOST=${BASH_REMATCH[2]}" >> $GITHUB_ENV
+            echo "VM_PORT=${BASH_REMATCH[3]}" >> $GITHUB_ENV
+          else
+            echo "Error: VM_SSH_TARGET must be in format user@host:port" >&2
             exit 1
           fi
 
-          VM_USER="${BASH_REMATCH[1]}"
-          VM_HOST="${BASH_REMATCH[2]}"
-          VM_SSH_PORT="${BASH_REMATCH[3]}"
-
-          SSH_OPTS=(
-            -i "$SSH_DIR/id_ed25519"
-            -o IdentitiesOnly=yes
-            -o StrictHostKeyChecking=yes
-            -o UserKnownHostsFile="$SSH_DIR/known_hosts"
-            -p "$VM_SSH_PORT"
-          )
-          SCP_OPTS=(
-            -i "$SSH_DIR/id_ed25519"
-            -o IdentitiesOnly=yes
-            -o StrictHostKeyChecking=yes
-            -o UserKnownHostsFile="$SSH_DIR/known_hosts"
-            -P "$VM_SSH_PORT"
-          )
-          SSH_TARGET="$VM_USER@$VM_HOST"
-
-          ssh "${SSH_OPTS[@]}" "$SSH_TARGET" "mkdir -p '$DEPLOY_PATH'"
-          scp "${SCP_OPTS[@]}" "$ENV_FILE" "$SSH_TARGET:$DEPLOY_PATH/.env"
-
-          printf -v q_image_ref '%q' "$IMAGE_REF"
-          printf -v q_deploy_path '%q' "$DEPLOY_PATH"
-
-          ssh "${SSH_OPTS[@]}" "$SSH_TARGET" \
-            "IMAGE_REF=$q_image_ref DEPLOY_PATH=$q_deploy_path bash -se" <<'EOF'
-          set -euo pipefail
-
-          DOCKER_CONFIG_DIR="$(mktemp -d)"
-          cleanup_remote() {
-            rm -rf "$DOCKER_CONFIG_DIR"
-          }
-          trap cleanup_remote EXIT
-
-          cd "$DEPLOY_PATH"
-          IMAGE_REF="$IMAGE_REF" DOCKER_CONFIG="$DOCKER_CONFIG_DIR" docker pull --platform linux/arm64 "$IMAGE_REF"
+      - name: Prepare Configurations
+        env:
+          APP_ENV_FILE: ${{ secrets.APP_ENV_FILE }}
+        run: |
+          mkdir -p .deploy
+          printf "%s\n" "$APP_ENV_FILE" > .deploy/.env
+          cat << 'EOF' > .deploy/docker-compose.yml
+          services:
+            app:
+              image: ${{ needs.build_and_push.outputs.image_ref }}
+              container_name: ta-aswan
+              restart: unless-stopped
+              env_file:
+                - .env
+              volumes:
+                - ta-aswan-writable:/var/www/html/writable
+              networks:
+                - proxy
           
-          # Hentikan container lama jika ada
-          docker stop ta-aswan-app 2>/dev/null || true
-          docker rm ta-aswan-app 2>/dev/null || true
+          volumes:
+            ta-aswan-writable:
           
-          # Jalankan container baru
-          docker run -d \
-            --name ta-aswan-app \
-            --env-file .env \
-            --restart unless-stopped \
-            -p 8080:80 \
-            "$IMAGE_REF"
-
-          echo "Deployment successful."
+          networks:
+            proxy:
+              external: true
           EOF
+
+      - name: Copy Files to VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.VM_HOST }}
+          username: ${{ env.VM_USER }}
+          port: ${{ env.VM_PORT }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: ".deploy/*"
+          target: "/opt/ta-aswan"
+          strip_components: 1
+
+      - name: Execute Deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.VM_HOST }}
+          username: ${{ env.VM_USER }}
+          port: ${{ env.VM_PORT }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /opt/ta-aswan
+            docker pull --platform linux/arm64 ${{ needs.build_and_push.outputs.image_ref }}
+            docker compose up -d --remove-orphans
+            echo "Deployment successful."
