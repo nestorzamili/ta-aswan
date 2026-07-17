@@ -6,11 +6,11 @@ $routes->get('health', static function () {
     try {
         $db = \Config\Database::connect();
         if (!$db->initialize()) {
-            return response()->setStatusCode(500)->setJSON(['status' => 'ERROR', 'message' => 'DB init failed']);
+            return \Config\Services::response()->setStatusCode(500)->setJSON(['status' => 'ERROR', 'message' => 'DB init failed']);
         }
-        return response()->setJSON(['status' => 'OK', 'database' => 'connected']);
+        return \Config\Services::response()->setJSON(['status' => 'OK', 'database' => 'connected']);
     } catch (\Throwable $e) {
-        return response()->setStatusCode(500)->setJSON(['status' => 'ERROR', 'message' => $e->getMessage()]);
+        return \Config\Services::response()->setStatusCode(500)->setJSON(['status' => 'ERROR', 'message' => $e->getMessage()]);
     }
 });
 
