@@ -206,6 +206,43 @@ a:hover {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Desktop: collapse / expand the left sidebar rail */
+.sidebar-collapse-toggle {
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.sidebar-collapse-toggle:hover,
+.sidebar-collapse-toggle:focus-visible {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--ink);
+  outline: 0;
+}
+
+.sidebar-collapse-toggle i {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
 .sidebar-backdrop {
   display: none;
 }
