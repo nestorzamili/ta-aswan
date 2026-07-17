@@ -3,10 +3,10 @@
 <form method="post" action="<?= site_url('login') ?>" autocomplete="on" novalidate>
     <?= csrf_field() ?>
     <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
+        <label class="form-label" for="username">Username atau Email</label>
         <input type="text" name="username" id="username" class="<?= esc(input_class('username')) ?>"
                value="<?= esc(old('username')) ?>" autofocus
-               autocomplete="username" placeholder="contoh: admin" aria-required="true"
+               autocomplete="username" placeholder="username atau email@domain.com" aria-required="true"
                <?= field_is_invalid('username') ? 'aria-invalid="true"' : '' ?>>
         <?= field_feedback('username') ?>
     </div>

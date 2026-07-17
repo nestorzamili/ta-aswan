@@ -37,4 +37,14 @@ class AdminModel extends Model
     {
         return $this->where('email', $email)->first();
     }
+
+    /**
+     * Resolve admin by login identifier: valid email → email column, otherwise username.
+     */
+    public function findByLogin(string $login): ?array
+    {
+        return filter_var($login, FILTER_VALIDATE_EMAIL)
+            ? $this->findByEmail($login)
+            : $this->findByUsername($login);
+    }
 }

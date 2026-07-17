@@ -37,6 +37,18 @@
   margin-bottom: 0;
 }
 
+.kpi-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.kpi-card-static {
+  cursor: default;
+}
+
+.kpi-value-sm {
+  font-size: 1.15rem;
+}
+
 .kpi-card {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -224,6 +236,7 @@ a.kpi-card-stok:has(.kpi-badge-kritis:not([hidden])) .kpi-icon.is-ok {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0;
+  overflow: visible;
 }
 
 .page-toolbar .filters {
@@ -231,14 +244,89 @@ a.kpi-card-stok:has(.kpi-badge-kritis:not([hidden])) .kpi-icon.is-ok {
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Search + Filter button row */
+.filters-primary {
+  display: flex;
+  flex: 1 1 14rem;
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.filters-primary .field-search {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.btn-filter-toggle {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.btn-filter-toggle .filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  margin-left: 0.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/*
+ * Filter panel (extra selects / date range under or beside search).
+ * Stay in normal document flow — no display:contents.
+ */
+.filters.has-filter-panel {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.filter-panel {
+  display: none;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-panel.show,
+.filter-panel.collapse.show {
+  display: flex;
+}
+
+/* Selects inside filters must shrink; never force overflow past toolbar */
+.filter-panel .form-select,
+.filters .form-select {
+  flex: 1 1 10rem;
+  min-width: 0;
+  max-width: 100%;
+  width: auto;
 }
 
 .field-search {
   position: relative;
   flex: 1 1 14rem;
-  min-width: 11rem;
+  min-width: 0;
   max-width: 22rem;
 }
 
@@ -283,25 +371,21 @@ a.kpi-card-stok:has(.kpi-badge-kritis:not([hidden])) .kpi-icon.is-ok {
   outline: 0;
 }
 
-.filters .form-select {
-  flex: 0 1 auto;
-  min-width: 8.5rem;
-  max-width: 12rem;
-}
-
+/* Date range: flexible, never min-width:max-content (that pushed controls off-screen) */
 .date-range {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  flex: 0 0 auto;
-  flex-shrink: 0;
-  min-width: max-content;
+  flex: 1 1 12rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .date-range .input-date {
-  width: 9.75rem;
-  min-width: 9.75rem;
-  max-width: 9.75rem;
+  flex: 1 1 0;
+  width: 0; /* equal share of flex row */
+  min-width: 0;
+  max-width: 11rem;
   min-height: 2.4rem;
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
@@ -322,12 +406,14 @@ a.kpi-card-stok:has(.kpi-badge-kritis:not([hidden])) .kpi-icon.is-ok {
   flex-wrap: wrap;
   align-items: center;
   row-gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .filters-inline .field-search {
   flex: 1 1 14rem;
   max-width: 20rem;
-  min-width: 12rem;
+  min-width: 0;
 }
 
 .page-toolbar .form-control {
@@ -375,8 +461,8 @@ tr.row-link .table-actions {
 
 #toast-root {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: max(1rem, env(safe-area-inset-top, 0px));
+  right: max(1rem, env(safe-area-inset-right, 0px));
   z-index: 1090;
   display: flex;
   flex-direction: column;

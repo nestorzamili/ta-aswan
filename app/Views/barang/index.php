@@ -2,6 +2,7 @@
 <?= $this->section('content') ?>
 <?php
 $hasFilter = $q !== '' || $kategori !== '' || $merk !== '' || $status !== '';
+$filterCount = (int) ($kategori !== '') + (int) ($merk !== '') + (int) ($status !== '');
 $route     = $cfg['route'];
 $label     = $cfg['label'];
 $pk        = $cfg['pk'];
@@ -10,31 +11,41 @@ $namaCol   = $cfg['nama'];
 $icon      = $cfg['icon'] ?? 'bi-box';
 ?>
 <div class="page-toolbar">
-    <form class="filters" method="get" id="filterForm">
-        <div class="field-search">
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <input type="search" name="q" id="f-q" value="<?= esc($q) ?>"
-                   class="form-control" placeholder="Cari nama atau kode…"
-                   aria-label="Cari nama atau kode" autocomplete="off">
+    <form class="filters has-filter-panel" method="get" id="filterForm">
+        <div class="filters-primary">
+            <div class="field-search">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input type="search" name="q" id="f-q" value="<?= esc($q) ?>"
+                       class="form-control" placeholder="Cari nama atau kode…"
+                       aria-label="Cari nama atau kode" autocomplete="off">
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-filter-toggle"
+                    data-bs-toggle="collapse" data-bs-target="#filterPanel" aria-expanded="<?= $filterCount ? 'true' : 'false' ?>"
+                    aria-controls="filterPanel">
+                <i class="bi bi-funnel" aria-hidden="true"></i> Filter
+                <?php if ($filterCount): ?><span class="filter-badge"><?= $filterCount ?></span><?php endif; ?>
+            </button>
         </div>
-        <select name="kategori" id="f-kategori" class="form-select" aria-label="Filter kategori" onchange="this.form.submit()">
-            <option value="">Semua kategori</option>
-            <?php foreach ($kategoris as $k): ?>
-                <option value="<?= esc($k) ?>" <?= $kategori === $k ? 'selected' : '' ?>><?= esc($k) ?></option>
-            <?php endforeach; ?>
-        </select>
-        <select name="merk" id="f-merk" class="form-select" aria-label="Filter merk" onchange="this.form.submit()">
-            <option value="">Semua merk</option>
-            <?php foreach ($merks as $m): ?>
-                <option value="<?= esc($m) ?>" <?= $merk === $m ? 'selected' : '' ?>><?= esc($m) ?></option>
-            <?php endforeach; ?>
-        </select>
-        <select name="status_stok" id="f-status" class="form-select" aria-label="Filter status stok" onchange="this.form.submit()">
-            <option value="">Semua status</option>
-            <?php foreach (['aman', 'rendah', 'habis'] as $s): ?>
-                <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
-            <?php endforeach; ?>
-        </select>
+        <div class="collapse filter-panel<?= $filterCount ? ' show' : '' ?>" id="filterPanel">
+            <select name="kategori" id="f-kategori" class="form-select" aria-label="Filter kategori" onchange="this.form.submit()">
+                <option value="">Semua kategori</option>
+                <?php foreach ($kategoris as $k): ?>
+                    <option value="<?= esc($k) ?>" <?= $kategori === $k ? 'selected' : '' ?>><?= esc($k) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <select name="merk" id="f-merk" class="form-select" aria-label="Filter merk" onchange="this.form.submit()">
+                <option value="">Semua merk</option>
+                <?php foreach ($merks as $m): ?>
+                    <option value="<?= esc($m) ?>" <?= $merk === $m ? 'selected' : '' ?>><?= esc($m) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <select name="status_stok" id="f-status" class="form-select" aria-label="Filter status stok" onchange="this.form.submit()">
+                <option value="">Semua status</option>
+                <?php foreach (['aman', 'rendah', 'habis'] as $s): ?>
+                    <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
     </form>
     <div class="page-toolbar-actions">
         <?php if ($hasFilter): ?>
@@ -75,9 +86,9 @@ foreach ($items as $row):
                     <td class="col-no"><?= $no++ ?></td>
                     <td class="code"><?= esc($row[$kodeCol]) ?></td>
                     <td class="code text-muted"><?= esc($row['kode_manual'] ?? '—') ?></td>
-                    <td><?= esc($row[$namaCol]) ?></td>
+                    <td class=""><?= esc($row[$namaCol]) ?></td>
                     <td><?= esc($row['kategori']) ?></td>
-                    <td><?= esc($row['merk']) ?></td>
+                    <td class=""><?= esc($row['merk']) ?></td>
                     <td class="text-end num num-money"><?= number_format((float) $row['harga_beli'], 0, ',', '.') ?></td>
                     <td class="text-end num num-money"><?= number_format((float) $row['harga_jual'], 0, ',', '.') ?></td>
                     <td class="text-end num"><?= (int) $row['stok'] ?></td>

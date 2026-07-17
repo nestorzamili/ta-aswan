@@ -2,33 +2,44 @@
 <?= $this->section('content') ?>
 <?php
 $hasFilter   = $q !== '' || ($tanggal_awal ?? '') !== '' || ($tanggal_akhir ?? '') !== '' || ! empty($id_supplier);
+$filterCount = (int) ! empty($id_supplier) + (int) (($tanggal_awal ?? '') !== '') + (int) (($tanggal_akhir ?? '') !== '');
 $routePrefix = 'barang-masuk/';
 ?>
 <div class="page-toolbar">
-    <form method="get" class="filters filters-inline">
-        <div class="field-search">
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <input type="search" name="q" value="<?= esc($q) ?>" class="form-control"
-                   placeholder="Cari faktur atau supplier…" aria-label="Cari faktur atau supplier" autocomplete="off">
+    <form method="get" class="filters filters-inline has-filter-panel">
+        <div class="filters-primary">
+            <div class="field-search">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input type="search" name="q" value="<?= esc($q) ?>" class="form-control"
+                       placeholder="Cari faktur atau supplier…" aria-label="Cari faktur atau supplier" autocomplete="off">
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-filter-toggle"
+                    data-bs-toggle="collapse" data-bs-target="#filterPanelMasuk"
+                    aria-expanded="<?= $filterCount ? 'true' : 'false' ?>" aria-controls="filterPanelMasuk">
+                <i class="bi bi-funnel" aria-hidden="true"></i> Filter
+                <?php if ($filterCount): ?><span class="filter-badge"><?= $filterCount ?></span><?php endif; ?>
+            </button>
         </div>
-        <select name="id_supplier" class="form-select" aria-label="Filter supplier" onchange="this.form.submit()">
-            <option value="">Semua supplier</option>
-            <?php foreach ($suppliers ?? [] as $s): ?>
-                <option value="<?= (int) $s['id_supplier'] ?>" <?= (int) ($id_supplier ?? 0) === (int) $s['id_supplier'] ? 'selected' : '' ?>>
-                    <?= esc($s['nama_supplier']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <fieldset class="date-range border-0 p-0 m-0">
-            <legend class="visually-hidden">Filter periode</legend>
-            <input type="text" name="tanggal_awal" value="<?= esc($tanggal_awal ?? '') ?>"
-                   class="form-control input-date" placeholder="DD-MM-YYYY"
-                   aria-label="Tanggal dari" autocomplete="off" readonly>
-            <span class="date-sep" aria-hidden="true">–</span>
-            <input type="text" name="tanggal_akhir" value="<?= esc($tanggal_akhir ?? '') ?>"
-                   class="form-control input-date" placeholder="DD-MM-YYYY"
-                   aria-label="Tanggal sampai" autocomplete="off" readonly>
-        </fieldset>
+        <div class="collapse filter-panel<?= $filterCount ? ' show' : '' ?>" id="filterPanelMasuk">
+            <select name="id_supplier" class="form-select" aria-label="Filter supplier" onchange="this.form.submit()">
+                <option value="">Semua supplier</option>
+                <?php foreach ($suppliers ?? [] as $s): ?>
+                    <option value="<?= (int) $s['id_supplier'] ?>" <?= (int) ($id_supplier ?? 0) === (int) $s['id_supplier'] ? 'selected' : '' ?>>
+                        <?= esc($s['nama_supplier']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <fieldset class="date-range border-0 p-0 m-0">
+                <legend class="visually-hidden">Filter periode</legend>
+                <input type="text" name="tanggal_awal" value="<?= esc($tanggal_awal ?? '') ?>"
+                       class="form-control input-date" placeholder="DD-MM-YYYY"
+                       aria-label="Tanggal dari" autocomplete="off" readonly>
+                <span class="date-sep" aria-hidden="true">–</span>
+                <input type="text" name="tanggal_akhir" value="<?= esc($tanggal_akhir ?? '') ?>"
+                       class="form-control input-date" placeholder="DD-MM-YYYY"
+                       aria-label="Tanggal sampai" autocomplete="off" readonly>
+            </fieldset>
+        </div>
     </form>
     <div class="page-toolbar-actions">
         <?php if ($hasFilter): ?>
@@ -74,7 +85,7 @@ foreach ($items as $row):
                     <td class="text-end num"><?= (int) $row['total_item'] ?></td>
                     <td class="text-end num"><?= (int) $row['total_quantity'] ?></td>
                     <td class="text-end num num-money"><?= number_format((float) $row['total_harga'], 0, ',', '.') ?></td>
-                    <td><?= esc($row['nama_admin']) ?></td>
+                    <td class=""><?= esc($row['nama_admin']) ?></td>
                     <td class="text-end">
                         <div class="dropdown table-actions">
                             <button class="btn-action-menu" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Aksi">

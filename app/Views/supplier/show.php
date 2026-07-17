@@ -33,26 +33,26 @@
     </div>
 </div>
 
-<div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="kpi-card" style="cursor: default;">
+<div class="kpi-grid kpi-grid-3">
+    <div class="kpi-card kpi-card-static">
         <div class="kpi-icon" aria-hidden="true"><i class="bi bi-box-arrow-in-down"></i></div>
         <div class="kpi-body">
             <div class="kpi-label">Transaksi masuk</div>
             <div class="kpi-value"><?= number_format((int) ($stats['jml_trx'] ?? 0), 0, ',', '.') ?></div>
         </div>
     </div>
-    <div class="kpi-card" style="cursor: default;">
+    <div class="kpi-card kpi-card-static">
         <div class="kpi-icon is-ok" aria-hidden="true"><i class="bi bi-layers"></i></div>
         <div class="kpi-body">
             <div class="kpi-label">Total qty</div>
             <div class="kpi-value"><?= number_format((int) ($stats['total_qty'] ?? 0), 0, ',', '.') ?></div>
         </div>
     </div>
-    <div class="kpi-card" style="cursor: default;">
+    <div class="kpi-card kpi-card-static">
         <div class="kpi-icon is-ink" aria-hidden="true"><i class="bi bi-cash-stack"></i></div>
         <div class="kpi-body">
             <div class="kpi-label">Total nilai</div>
-            <div class="kpi-value" style="font-size:1.15rem">Rp <?= number_format((float) ($stats['total_nilai'] ?? 0), 0, ',', '.') ?></div>
+            <div class="kpi-value kpi-value-sm">Rp <?= number_format((float) ($stats['total_nilai'] ?? 0), 0, ',', '.') ?></div>
         </div>
     </div>
 </div>
@@ -86,7 +86,7 @@ foreach ($recent as $r):
                     <td class="num"><?= esc(date('d-m-Y', strtotime($r['tanggal_masuk']))) ?></td>
                     <td class="text-end num"><?= (int) $r['total_quantity'] ?></td>
                     <td class="text-end num num-money"><?= number_format((float) $r['total_harga'], 0, ',', '.') ?></td>
-                    <td><?= esc($r['nama_admin'] ?? '—') ?></td>
+                    <td class=""><?= esc($r['nama_admin'] ?? '—') ?></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (! $recent): ?>

@@ -1,24 +1,37 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
-<?php $hasFilter = $q !== '' || $level !== '' || $status !== ''; ?>
+<?php
+$hasFilter   = $q !== '' || $level !== '' || $status !== '';
+$filterCount = (int) ($level !== '') + (int) ($status !== '');
+?>
 <div class="page-toolbar">
-    <form class="filters filters-inline" method="get">
-        <div class="field-search">
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <input type="search" name="q" value="<?= esc($q) ?>" class="form-control"
-                   placeholder="Cari nama, username, email, telepon…"
-                   aria-label="Cari pengguna" autocomplete="off">
+    <form class="filters filters-inline has-filter-panel" method="get">
+        <div class="filters-primary">
+            <div class="field-search">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input type="search" name="q" value="<?= esc($q) ?>" class="form-control"
+                       placeholder="Cari nama, username, email, telepon…"
+                       aria-label="Cari pengguna" autocomplete="off">
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-filter-toggle"
+                    data-bs-toggle="collapse" data-bs-target="#filterPanelUser"
+                    aria-expanded="<?= $filterCount ? 'true' : 'false' ?>" aria-controls="filterPanelUser">
+                <i class="bi bi-funnel" aria-hidden="true"></i> Filter
+                <?php if ($filterCount): ?><span class="filter-badge"><?= $filterCount ?></span><?php endif; ?>
+            </button>
         </div>
-        <select name="level" class="form-select" aria-label="Filter level" onchange="this.form.submit()">
-            <option value="">Semua level</option>
-            <option value="admin" <?= $level === 'admin' ? 'selected' : '' ?>>Admin</option>
-            <option value="karyawan" <?= $level === 'karyawan' ? 'selected' : '' ?>>Karyawan</option>
-        </select>
-        <select name="status" class="form-select" aria-label="Filter status" onchange="this.form.submit()">
-            <option value="">Semua status</option>
-            <option value="aktif" <?= $status === 'aktif' ? 'selected' : '' ?>>Aktif</option>
-            <option value="nonaktif" <?= $status === 'nonaktif' ? 'selected' : '' ?>>Nonaktif</option>
-        </select>
+        <div class="collapse filter-panel<?= $filterCount ? ' show' : '' ?>" id="filterPanelUser">
+            <select name="level" class="form-select" aria-label="Filter level" onchange="this.form.submit()">
+                <option value="">Semua level</option>
+                <option value="admin" <?= $level === 'admin' ? 'selected' : '' ?>>Admin</option>
+                <option value="karyawan" <?= $level === 'karyawan' ? 'selected' : '' ?>>Karyawan</option>
+            </select>
+            <select name="status" class="form-select" aria-label="Filter status" onchange="this.form.submit()">
+                <option value="">Semua status</option>
+                <option value="aktif" <?= $status === 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                <option value="nonaktif" <?= $status === 'nonaktif' ? 'selected' : '' ?>>Nonaktif</option>
+            </select>
+        </div>
     </form>
     <div class="page-toolbar-actions">
         <?php if ($hasFilter): ?>
@@ -54,9 +67,9 @@ foreach ($items as $row):
     ?>
                 <tr>
                     <td class="col-no"><?= $no++ ?></td>
-                    <td><?= esc($row['nama']) ?></td>
+                    <td class=""><?= esc($row['nama']) ?></td>
                     <td class="code"><?= esc($row['username']) ?></td>
-                    <td><?= esc($row['email']) ?></td>
+                    <td class=""><?= esc($row['email']) ?></td>
                     <td class="num"><?= esc($row['nomor_telepon']) ?></td>
                     <td><span class="badge badge-jenis"><?= esc($row['level']) ?></span></td>
                     <td>

@@ -109,25 +109,33 @@
       const qty = pre?.quantity || 1;
       const hargaName = hargaEditable ? 'name="harga_satuan[]"' : '';
       const hargaRo = hargaEditable ? 'required' : 'readonly';
+      const hargaLabel = hargaEditable ? 'Harga' : 'Harga';
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>
-          <select name="id_barang[]" class="form-select form-select-sm barang" aria-label="Barang">
+        <td data-label="Barang">
+          <div class="line-field-label">Barang</div>
+          <select name="id_barang[]" class="form-select barang" aria-label="Barang">
+            <option value="">Pilih barang…</option>
             ${optionsFor(id)}
           </select>
         </td>
-        <td>
-          <input type="number" name="quantity[]" class="form-control form-control-sm text-end" min="1" value="${qty}" required aria-label="Qty">
+        <td data-label="Qty">
+          <div class="line-field-label">Qty</div>
+          <input type="number" name="quantity[]" class="form-control text-end" min="1" value="${qty}" required aria-label="Qty" inputmode="numeric">
         </td>
-        <td>
-          <div class="input-group input-group-sm field-money">
+        <td data-label="${hargaLabel}">
+          <div class="line-field-label">${hargaLabel}</div>
+          <div class="input-group field-money">
             <span class="input-group-text">Rp</span>
             <input type="text" ${hargaName} class="form-control harga input-money text-end" inputmode="numeric" autocomplete="off" ${hargaRo} aria-label="Harga" placeholder="0">
           </div>
         </td>
-        <td class="text-end"><span class="subtotal">0</span></td>
+        <td class="text-end" data-label="Subtotal">
+          <div class="line-field-label">Subtotal</div>
+          <span class="subtotal">0</span>
+        </td>
         <td class="text-center">
-          <button type="button" class="btn btn-sm btn-outline-danger btn-rm" aria-label="Hapus baris"><i class="bi bi-x-lg"></i></button>
+          <button type="button" class="btn btn-outline-danger btn-rm" aria-label="Hapus baris"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
         </td>`;
       tbody.appendChild(tr);
 
@@ -146,10 +154,11 @@
       if (globalThis.MoneyInput && hargaEl) MoneyInput.bind(hargaEl);
       if (pre?.harga_satuan) {
         hargaEl.value = moneyFormat(pre.harga_satuan);
-      } else {
+      } else if (id) {
         syncHarga(tr.querySelector('.barang'));
+      } else {
+        recalcTotal();
       }
-      recalcTotal();
     }
 
     document.getElementById('btnAddRow')?.addEventListener('click', () => addRow());

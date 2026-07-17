@@ -44,7 +44,7 @@ foreach ($items as $row):
     ?>
                 <tr class="row-link" data-href="<?= esc($detailUrl, 'attr') ?>" title="Buka detail supplier">
                     <td class="col-no"><?= $no++ ?></td>
-                    <td>
+                    <td class="">
                         <a class="row-link-main" href="<?= esc($detailUrl) ?>"><?= esc($row['nama_supplier']) ?></a>
                     </td>
                     <td>

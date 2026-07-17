@@ -9,7 +9,7 @@ use Config\Services;
 class AuthController extends BaseController
 {
     private const ROUTE_LOGIN         = '/login';
-    private const MSG_BAD_CREDENTIALS = 'Username atau password salah.';
+    private const MSG_BAD_CREDENTIALS = 'Username/email atau password salah.';
     private const DATETIME_FORMAT     = 'Y-m-d H:i:s';
 
     public function login()
@@ -26,7 +26,7 @@ class AuthController extends BaseController
         $throttler  = Services::throttler();
         $throttled  = ! $throttler->check('login_' . md5($this->request->getIPAddress()), 5, MINUTE);
         $validInput = $throttled || $this->validate([
-            'username' => ['label' => 'Username', 'rules' => 'required'],
+            'username' => ['label' => 'Username atau Email', 'rules' => 'required'],
             'password' => ['label' => 'Password', 'rules' => 'required'],
         ]);
 
@@ -35,9 +35,9 @@ class AuthController extends BaseController
                 ? $this->redirectBackWithFieldErrors([], 'Terlalu banyak percobaan login. Silakan coba lagi nanti.')
                 : $this->redirectBackWithFieldErrors($this->validator->getErrors());
         } else {
-            $username = trim((string) $this->request->getPost('username'));
+            $login    = trim((string) $this->request->getPost('username'));
             $password = (string) $this->request->getPost('password');
-            $admin    = (new AdminModel())->findByUsername($username);
+            $admin    = (new AdminModel())->findByLogin($login);
 
             if ($admin && $admin['status'] === 'aktif' && password_verify($password, $admin['password'])) {
                 session()->regenerate();

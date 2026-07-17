@@ -5,6 +5,7 @@ body.is-auth {
 
 .auth-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 1.5rem;
@@ -64,7 +65,7 @@ body.is-auth {
 
 .auth-card .btn-primary {
   width: 100%;
-  min-height: 2.5rem;
+  min-height: 2.4rem;
   margin-top: 0.25rem;
 }
 

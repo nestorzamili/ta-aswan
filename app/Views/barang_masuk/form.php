@@ -47,11 +47,10 @@ $oldTanggal              = old('tanggal_masuk', date('d-m-Y'));
                     </button>
                 </div>
                 <?= field_feedback('lines') ?>
-                <div class="table-responsive border rounded <?= field_is_invalid('lines') ? 'border-danger' : '' ?>">
+                <div class="table-responsive lines-table-wrap <?= field_is_invalid('lines') ? 'border-danger' : '' ?>">
                     <table class="table table-hover mb-0 lines-table" id="tblItems">
                         <thead>
                         <tr>
-
                             <th scope="col">Barang</th>
                             <th scope="col" class="col-qty text-end">Qty</th>
                             <th scope="col" class="col-harga text-end">Harga beli</th>
