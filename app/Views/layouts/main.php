@@ -48,11 +48,9 @@ $flashSuccess     = session()->getFlashdata('success');
     };
     $initials = mb_strtoupper(mb_substr((string) session('nama'), 0, 1));
     ?>
-<button class="menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarNav" aria-controls="sidebarNav" aria-expanded="false">
-    <i class="bi bi-list"></i> Menu navigasi
-</button>
+<div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
 
-<aside class="sidebar collapse" id="sidebarNav">
+<aside class="sidebar" id="sidebarNav" aria-label="Navigasi utama">
     <a class="brand" href="<?= site_url('dashboard') ?>" data-tooltip="Android Service">
         <span class="brand-mark" aria-hidden="true"><i class="bi bi-phone-flip"></i></span>
         <span class="brand-text">
@@ -110,17 +108,20 @@ $flashSuccess     = session()->getFlashdata('success');
 
 <div class="main-wrap">
     <header class="topbar">
-        <div class="d-flex align-items-center gap-3">
-            <button type="button" class="btn-action-menu d-none d-md-flex align-items-center justify-content-center border-0 bg-transparent" id="desktopMenuToggle" aria-label="Toggle Menu" style="color: var(--ink);">
-                <i class="bi bi-list fs-5"></i>
+        <div class="topbar-start">
+            <button type="button" class="menu-toggle" id="mobileMenuToggle" aria-controls="sidebarNav" aria-expanded="false" aria-label="Buka menu navigasi">
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn-action-menu d-none d-md-flex align-items-center justify-content-center border-0 bg-transparent" id="desktopMenuToggle" aria-label="Ciutkan menu samping" style="color: var(--ink);">
+                <i class="bi bi-list fs-5" aria-hidden="true"></i>
             </button>
             <h1><?= esc($title ?? 'Dashboard') ?></h1>
         </div>
         <div class="topbar-meta">
-            <span class="topbar-clock" id="clock" title="Waktu server browser"><?= date('d M Y · H:i') ?></span>
+            <span class="topbar-clock" id="clock" title="Waktu browser"><?= date('d M Y · H:i') ?></span>
             <span class="user-chip">
                 <span class="avatar" aria-hidden="true"><?= esc($initials) ?></span>
-                <span><?= esc(session('nama')) ?></span>
+                <span class="user-name"><?= esc(session('nama')) ?></span>
             </span>
         </div>
     </header>
@@ -196,23 +197,73 @@ if (desktopToggle) {
   desktopToggle.addEventListener('click', () => {
     document.body.classList.toggle('sidebar-collapsed');
     localStorage.setItem('sidebar-collapsed', document.body.classList.contains('sidebar-collapsed'));
-    
-    // Hide open tooltips when toggling
-    document.querySelectorAll('[data-tooltip]').forEach(el => {
+    document.querySelectorAll('[data-tooltip]').forEach((el) => {
       const instance = bootstrap.Tooltip.getInstance(el);
       if (instance) instance.hide();
     });
   });
 }
 
-// Initialize Bootstrap Tooltips for sidebar items (only active when collapsed)
-document.querySelectorAll('[data-tooltip]').forEach(el => {
+/* Mobile off-canvas drawer */
+(function () {
+  const sidebar = document.getElementById('sidebarNav');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const toggle = document.getElementById('mobileMenuToggle');
+  if (!sidebar || !toggle) return;
+
+  const mq = window.matchMedia('(max-width: 767.98px)');
+
+  function setOpen(open) {
+    if (!mq.matches) {
+      sidebar.classList.remove('is-open');
+      sidebar.removeAttribute('aria-hidden');
+      sidebar.inert = false;
+      backdrop?.classList.remove('is-visible');
+      if (backdrop) backdrop.hidden = true;
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Buka menu navigasi');
+      return;
+    }
+    sidebar.classList.toggle('is-open', open);
+    document.body.classList.toggle('nav-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+    // Keep off-canvas drawer out of a11y / tab order when closed
+    sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    sidebar.inert = !open;
+    if (backdrop) {
+      backdrop.hidden = !open;
+      backdrop.classList.toggle('is-visible', open);
+    }
+  }
+
+  // Initial closed state on narrow screens
+  if (mq.matches) {
+    sidebar.setAttribute('aria-hidden', 'true');
+    sidebar.inert = true;
+  }
+
+  toggle.addEventListener('click', () => {
+    setOpen(!sidebar.classList.contains('is-open'));
+  });
+  backdrop?.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+  sidebar.querySelectorAll('a.nav-link').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+  mq.addEventListener('change', () => setOpen(false));
+})();
+
+document.querySelectorAll('[data-tooltip]').forEach((el) => {
   new bootstrap.Tooltip(el, {
-    title: function() {
+    title: function () {
       return document.body.classList.contains('sidebar-collapsed') ? el.getAttribute('data-tooltip') : '';
     },
     placement: 'right',
-    trigger: 'hover'
+    trigger: 'hover',
   });
 });
 </script>

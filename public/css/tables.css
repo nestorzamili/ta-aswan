@@ -239,3 +239,15 @@
   font-weight: 500;
   font-size: 0.78em;
 }
+
+/* Mobile: keep real tables — horizontal scroll via .table-responsive only */
+@media (max-width: 767.98px) {
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .table {
+    min-width: 36rem; /* encourage scroll rather than crushing columns */
+  }
+}

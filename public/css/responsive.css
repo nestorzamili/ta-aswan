@@ -1,27 +1,120 @@
+/* ==========================================================================
+   Responsive / mobile UX
+   Breakpoints: 991 tablet · 767 phone · 575 small · 480 narrow
+   ========================================================================== */
+
+/* —— Global polish —— */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .skeleton-text,
+  .skeleton-box {
+    animation: none !important;
+  }
+}
+
+/* —— Tablet —— */
 @media (max-width: 991.98px) {
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* —— Phone (primary mobile shell) —— */
 @media (max-width: 767.98px) {
-  .menu-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  /*
+   * Inputs only: 16px prevents iOS focus-zoom (root is 15px).
+   * Keep control height close to desktop (2.4rem) — slightly taller for thumb.
+   */
+  .form-control,
+  .form-select,
+  .select-modern,
+  .page-toolbar .form-control,
+  .filters .form-select {
+    font-size: 16px !important;
+    min-height: 2.5rem;
+  }
+
+  .input-group-text {
+    min-height: 2.5rem;
+    font-size: 0.82rem;
+  }
+
+  /* Buttons: do NOT inflate global size — dense admin UI */
+  .btn {
+    min-height: 2.4rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.85rem;
+  }
+
+  .btn-sm {
+    min-height: 2.1rem;
+    min-width: 2.1rem;
+    padding: 0.28rem 0.55rem;
+    font-size: 0.82rem;
+  }
+
+  .btn-action-menu {
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
+    min-height: 2.35rem;
+  }
+
+  .dropdown-menu.action-menu .dropdown-item {
+    min-height: 2.4rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .pager-nav .page-item .page-link {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+  }
+
+  /* —— Drawer nav —— */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1055;
+    background: rgba(28, 25, 23, 0.48);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sidebar-backdrop.is-visible {
+    display: block;
+  }
+
+  body.nav-open {
+    overflow: hidden;
+    touch-action: none;
   }
 
   .sidebar {
-    position: static;
-    width: 100%;
-    min-height: auto;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(18rem, 88vw);
+    min-height: 100%;
+    min-height: 100dvh;
+    height: 100%;
+    height: 100dvh;
+    z-index: 1060;
+    transform: translateX(-105%);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: none;
   }
 
-  .sidebar.collapse:not(.show) {
-    display: none !important;
-  }
-  .sidebar.collapse.show {
-    display: flex !important;
+  .sidebar.is-open {
+    transform: translateX(0);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
   }
 
   .main-wrap {
@@ -29,34 +122,83 @@
     width: 100%;
   }
 
-  .content {
-    padding: 1rem 1rem 1.5rem;
-    gap: 1rem;
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    min-width: 2.4rem;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  .menu-toggle:hover,
+  .menu-toggle:focus-visible {
+    background: var(--surface-2);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--accent-ring);
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.65rem 1rem;
+    padding-top: max(0.65rem, env(safe-area-inset-top, 0px));
+    gap: 0.5rem;
+  }
+
+  .topbar-start {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+    flex: 1;
   }
 
   .topbar h1 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
 
-  .form-control,
-  .form-select {
-    font-size: 1rem;
-    min-height: 2.75rem;
+  .topbar-clock {
+    display: none !important;
   }
 
-  .btn {
-    min-height: 2.5rem;
-    font-size: 0.95rem;
+  .user-chip .role {
+    display: none;
   }
 
-  .btn-action-menu {
-    width: 2.5rem;
-    height: 2.5rem;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+  .user-chip .user-name {
+    max-width: 7.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .kpi-grid {
+  .content {
+    padding: 1rem 1rem 1.5rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+    gap: 1rem;
+  }
+
+  .app-footer {
+    padding: 0.75rem 1rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  /* KPI */
+  .kpi-grid,
+  .kpi-grid-3 {
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
   }
@@ -86,66 +228,271 @@
     padding: 1.1rem;
   }
 
+  /* Toolbar + filters: single column, no overflow outside content */
   .page-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .page-toolbar .filters {
+  .page-toolbar .filters,
+  .page-toolbar .filters.has-filter-panel {
     width: 100%;
+    max-width: 100%;
+    flex: none;
     flex-direction: column;
     align-items: stretch;
   }
 
-  .field-search,
-  .filters .form-select {
+  .filters-primary {
+    width: 100%;
+    flex: none;
+    align-items: stretch;
+  }
+
+  .filters-primary .field-search {
+    flex: 1 1 auto;
     max-width: none;
+  }
+
+  .filter-panel.collapse:not(.show) {
+    display: none !important;
+  }
+
+  .filter-panel.show,
+  .filter-panel.collapse.show {
+    display: flex !important;
+    flex: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
     width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* Supplier / kategori / status: full width of panel (not hanging outside) */
+  .filter-panel .form-select,
+  .filters .form-select,
+  .field-search {
+    width: 100%;
+    max-width: none;
     min-width: 0;
+    flex: none;
   }
 
-  .filters-inline {
-    flex-wrap: wrap;
-  }
-
-  .date-range {
+  /* Date range: two equal fields inside the panel */
+  .date-range,
+  .filter-panel .date-range {
+    display: flex;
     width: 100%;
-    justify-content: stretch;
+    max-width: 100%;
+    flex: none;
+    gap: 0.4rem;
   }
 
   .date-range .input-date {
     flex: 1 1 0;
-    width: auto;
-    min-width: 8.5rem;
+    width: 0;
     max-width: none;
+    min-height: 2.5rem;
+    font-size: 16px !important;
   }
 
   .page-toolbar-actions {
     width: 100%;
+    justify-content: flex-end;
   }
 
   .page-toolbar-actions .btn {
-    flex: 1;
+    flex: 0 1 auto;
+    width: auto;
+  }
+
+  .btn-filter-toggle {
+    min-height: 2.5rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  /* Forms: primary actions full-width; secondary can match */
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions .btn,
+  .form-actions .btn-primary {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .form-card > .card-body {
+    padding: 1.1rem 1rem;
+  }
+
+  .panel-head {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* "Tambah baris" stays compact, not full-width bar */
+  .panel-head .btn {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  /* Transaction lines: keep real table + horizontal scroll */
+  .lines-table-wrap {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .lines-table {
+    min-width: 32rem;
+  }
+
+  .lines-table .form-select,
+  .lines-table .form-control {
+    font-size: 16px !important;
+    min-height: 2.5rem;
+  }
+
+  .lines-table .line-field-label {
+    display: none !important; /* only for abandoned card layout */
+  }
+
+  .tx-total-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    margin-top: 0.5rem;
+    justify-content: space-between;
+    box-shadow: 0 -4px 16px rgba(28, 25, 23, 0.08);
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Toast: avoid notch / edges */
+  #toast-root {
+    top: max(0.75rem, env(safe-area-inset-top, 0px));
+    right: 0.75rem;
+    left: 0.75rem;
+    max-width: none;
+  }
+
+  /* Charts shorter on phone */
+  .chart-box {
+    height: 200px;
+  }
+
+  .chart-box.chart-box-sm {
+    height: 190px;
+  }
+
+  .chart-box.chart-box-lg {
+    height: 210px;
+  }
+
+  /* Auth */
+  .auth-shell {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 1rem;
+    padding-top: max(1rem, env(safe-area-inset-top, 0px));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .auth-card .auth-body {
+    padding: 1rem 1.15rem 1.25rem;
   }
 }
 
+/* Desktop: hide mobile-only chrome; sidebar always visible */
 @media (min-width: 768px) {
-  .sidebar.collapse {
-    display: flex !important;
-    height: auto !important;
-    visibility: visible !important;
-  }
   .menu-toggle {
     display: none !important;
+  }
+
+  .sidebar-backdrop {
+    display: none !important;
+  }
+
+  .sidebar {
+    transform: none !important;
+  }
+
+  body.nav-open {
+    overflow: auto;
+    touch-action: auto;
+  }
+
+  /* Desktop: filter controls always visible inline */
+  .btn-filter-toggle {
+    display: none !important;
+  }
+
+  .filters-primary {
+    flex: 1 1 14rem;
+    max-width: 22rem;
+  }
+
+  .filters-primary .field-search {
+    max-width: 22rem;
+  }
+
+  .filter-panel,
+  .filter-panel.collapse,
+  .filter-panel.collapse:not(.show),
+  .filter-panel.collapse.show {
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    height: auto !important;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  .filter-panel .form-select,
+  .filters .form-select {
+    flex: 0 1 12rem;
+    width: auto;
+    max-width: 14rem;
+    min-width: 8rem;
+  }
+
+  .filter-panel .date-range,
+  .date-range {
+    flex: 0 1 18rem;
+    max-width: 22rem;
+  }
+
+  .date-range .input-date {
+    max-width: 10rem;
   }
 }
 
 @media (max-width: 480px) {
-  .kpi-grid {
+  .kpi-grid,
+  .kpi-grid-3 {
     grid-template-columns: 1fr;
   }
 }
 
+/* —— Flatpickr (theme only; positioning handled by JS → body) —— */
 .input-date,
 .datepicker {
   cursor: pointer;
@@ -154,21 +501,18 @@
   background-repeat: no-repeat;
   background-position: right 0.65rem center;
   background-size: 14px;
-}
-
-.datepicker {
-  padding-right: 2.1rem !important;
+  padding-right: 2.1rem;
 }
 
 .flatpickr-calendar {
   font-family: var(--font);
   z-index: 10050 !important;
+  width: 307px !important;
+  max-width: calc(100vw - 1.25rem);
   border: 1px solid var(--line) !important;
   border-radius: 0.65rem !important;
   box-shadow: var(--shadow-md) !important;
   background: var(--surface) !important;
-  overflow: visible;
-  width: 307px !important;
 }
 
 .flatpickr-months {

@@ -18,7 +18,7 @@ class AdminSeeder extends Seeder
                 'username'      => 'admin',
                 'password'      => $hash,
                 'nama'          => 'Admin',
-                'email'         => 'admin@androidservice.local',
+                'email'         => 'aswan@zamili.dev',
                 'nomor_telepon' => '081200000001',
                 'level'         => 'admin',
                 'status'        => 'aktif',

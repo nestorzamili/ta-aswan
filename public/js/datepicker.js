@@ -7,20 +7,7 @@
       longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
     },
     months: {
-      shorthand: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'Mei',
-        'Jun',
-        'Jul',
-        'Agu',
-        'Sep',
-        'Okt',
-        'Nov',
-        'Des',
-      ],
+      shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
       longhand: [
         'Januari',
         'Februari',
@@ -43,17 +30,29 @@
     toggleTitle: 'Klik untuk ganti',
   };
 
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /**
+   * Best practice: calendar always portaled to <body> (not static in parent).
+   * Avoids clipping / “outside” placement inside filter panels, fieldsets, cards.
+   */
   const defaults = {
     dateFormat: 'd-m-Y',
     allowInput: false,
     disableMobile: true,
     locale: localeId,
-    animate: true,
+    animate: !reducedMotion,
     monthSelectorType: 'static',
     clickOpens: true,
     static: false,
     appendTo: document.body,
     position: 'auto',
+    // Keep calendar above sidebars / sticky chrome
+    onReady(_selected, _dateStr, instance) {
+      if (instance.calendarContainer) {
+        instance.calendarContainer.style.zIndex = '10050';
+      }
+    },
   };
 
   document.querySelectorAll('input.input-date').forEach((el) => {

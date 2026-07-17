@@ -106,7 +106,7 @@ foreach ($menipis as $r): ?>
                         <td class="col-no"><?= $no++ ?></td>
                         <td><span class="badge badge-jenis"><?= esc($r['tipe']) ?></span></td>
                         <td class="code"><?= esc($r['kode']) ?></td>
-                        <td><a class="row-link-main" href="<?= esc($editUrl) ?>" aria-label="Edit <?= esc($r['nama'], 'attr') ?>"><span><?= esc($r['nama']) ?></span></a></td>
+                        <td class=""><a class="row-link-main" href="<?= esc($editUrl) ?>" aria-label="Edit <?= esc($r['nama'], 'attr') ?>"><span><?= esc($r['nama']) ?></span></a></td>
                         <td class="text-end num"><?= (int) $r['stok'] ?></td>
                         <td><span class="badge status-<?= esc($r['status_stok']) ?>"><?= esc($r['status_stok']) ?></span></td>
                     </tr>

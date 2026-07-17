@@ -214,6 +214,16 @@
   color: var(--muted);
 }
 
+.lines-table-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+.lines-table-wrap.border-danger {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 1px rgba(153, 27, 27, 0.12);
+}
+
 .lines-table th.col-qty {
   width: 6.5rem;
 }
@@ -225,6 +235,10 @@
 }
 .lines-table th.col-act {
   width: 2.75rem;
+}
+
+.lines-table .line-field-label {
+  display: none;
 }
 .lines-table .subtotal {
   font-family: var(--font-mono);

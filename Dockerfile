@@ -16,7 +16,8 @@ RUN composer dump-autoload --no-dev --optimize
 # ==========================================
 FROM php:8.2-fpm-alpine
 
-RUN apk add --no-cache nginx supervisor
+RUN apk add --no-cache nginx supervisor tzdata
+ENV TZ=Asia/Jakarta
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions \
