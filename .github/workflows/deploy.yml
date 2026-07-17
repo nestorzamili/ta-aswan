@@ -100,6 +100,7 @@ jobs:
           
           volumes:
             ta-aswan-writable:
+              name: ta-aswan-writable
           
           networks:
             proxy:
