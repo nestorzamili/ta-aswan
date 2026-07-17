@@ -5,9 +5,7 @@ $routes->get('/', static fn () => redirect()->to('/login'));
 $routes->get('health', static function () {
     try {
         $db = \Config\Database::connect();
-        if (!$db->initialize()) {
-            return \Config\Services::response()->setStatusCode(500)->setJSON(['status' => 'ERROR', 'message' => 'DB init failed']);
-        }
+        $db->initialize();
         return \Config\Services::response()->setJSON(['status' => 'OK', 'database' => 'connected']);
     } catch (\Throwable $e) {
         return \Config\Services::response()->setStatusCode(500)->setJSON(['status' => 'ERROR', 'message' => $e->getMessage()]);
