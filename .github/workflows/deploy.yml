@@ -98,7 +98,7 @@ jobs:
               networks:
                 - proxy
               healthcheck:
-                test: ["CMD-SHELL", "wget -qO- --header='User-Agent: Docker-Healthcheck' http://localhost/health > /dev/null 2>&1 || exit 1"]
+                test: ["CMD-SHELL", "wget -qO- --header='User-Agent: Docker-Healthcheck' http://127.0.0.1/health > /dev/null 2>&1 || exit 1"]
                 interval: 30s
                 timeout: 10s
                 retries: 3
@@ -135,4 +135,8 @@ jobs:
             cd /opt/ta-aswan
             docker pull --platform linux/arm64 ${{ needs.build_and_push.outputs.image_ref }}
             docker compose up -d --remove-orphans
-            echo "Deployment successful."
+            
+            echo "Membersihkan image versi lama..."
+            docker rmi $(docker images --filter "reference=ghcr.io/${{ github.repository_owner }}/ta-aswan" -q) 2>/dev/null || true
+            
+            echo "Deployment dan Cleanup successful."
