@@ -1,0 +1,37 @@
+<?php
+
+namespace Config;
+
+class Kint
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Global Settings
+    |--------------------------------------------------------------------------
+    */
+
+    public $plugins;
+    public int $maxDepth           = 6;
+    public bool $displayCalledFrom = true;
+    public bool $expanded          = false;
+
+    /*
+    |--------------------------------------------------------------------------
+    | RichRenderer Settings
+    |--------------------------------------------------------------------------
+    */
+    public string $richTheme = 'aante-light.css';
+    public bool $richFolder  = false;
+    public $richObjectPlugins;
+    public $richTabPlugins;
+
+    /*
+    |--------------------------------------------------------------------------
+    | CLI Settings
+    |--------------------------------------------------------------------------
+    */
+    public bool $cliColors      = true;
+    public bool $cliForceUTF8   = false;
+    public bool $cliDetectWidth = true;
+    public int $cliMinWidth     = 40;
+}

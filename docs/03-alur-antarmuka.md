@@ -12,18 +12,18 @@ Hak akses per level: matriks tunggal di [02-kebutuhan-sistem.md §1](02-kebutuha
 
 Urutan menu sesuai mockup proposal (Gambar 3.2):
 
-| No | Menu | Route CI4 | Keterangan |
-|----|------|-----------|------------|
-| 1 | Dashboard | `/dashboard` | KPI & grafik |
-| 2 | Data Sparepart | `/sparepart` | CRUD sparepart |
-| 3 | Data Aksesoris | `/aksesoris` | CRUD aksesoris |
-| 4 | Barang Masuk | `/barang-masuk` | Transaksi masuk |
-| 5 | Barang Keluar | `/barang-keluar` | Transaksi keluar |
-| 6 | Stok Barang | `/stok` | Monitoring stok |
-| 7 | Supplier | `/supplier` | CRUD supplier |
-| 8 | Laporan | `/laporan` | Generate PDF |
-| 9 | Pengguna | `/pengguna` | CRUD pengguna (admin only) |
-| 10 | Logout | `/logout` | Keluar sistem |
+| No  | Menu           | Route CI4        | Keterangan                 |
+| --- | -------------- | ---------------- | -------------------------- |
+| 1   | Dashboard      | `/dashboard`     | KPI & grafik               |
+| 2   | Data Sparepart | `/sparepart`     | CRUD sparepart             |
+| 3   | Data Aksesoris | `/aksesoris`     | CRUD aksesoris             |
+| 4   | Barang Masuk   | `/barang-masuk`  | Transaksi masuk            |
+| 5   | Barang Keluar  | `/barang-keluar` | Transaksi keluar           |
+| 6   | Stok Barang    | `/stok`          | Monitoring stok            |
+| 7   | Supplier       | `/supplier`      | CRUD supplier              |
+| 8   | Laporan        | `/laporan`       | Generate PDF               |
+| 9   | Pengguna       | `/pengguna`      | CRUD pengguna (admin only) |
+| 10  | Logout         | `/logout`        | Keluar sistem              |
 
 ### Layout Umum
 
@@ -36,11 +36,11 @@ Setiap halaman (kecuali login) memiliki:
 
 ### Halaman Publik vs Terproteksi
 
-| Halaman | Akses |
-|---------|-------|
-| Login | Publik |
-| Lupa Password / Reset Password | Publik |
-| Semua menu lainnya | Session required (`admin` atau `karyawan`) |
+| Halaman                        | Akses                                      |
+| ------------------------------ | ------------------------------------------ |
+| Login                          | Publik                                     |
+| Lupa Password / Reset Password | Publik                                     |
+| Semua menu lainnya             | Session required (`admin` atau `karyawan`) |
 
 Tombol **Hapus** pada transaksi & master data hanya ditampilkan untuk **admin**. Menu **Pengguna** disembunyikan untuk karyawan.
 

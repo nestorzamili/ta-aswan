@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+Dockerfile
+docs/
+vendor/
+node_modules/
+tests/
+writable/logs/*
+writable/cache/*
+writable/session/*
+!writable/logs/index.html
+!writable/cache/index.html
+!writable/session/index.html

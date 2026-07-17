@@ -1,1 +1,144 @@
-PROPOSAL ASWANDI BAB 1-3.docx
+#-------------------------
+# OS
+#-------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+*~
+.directory
+.Trash-*
+
+#-------------------------
+# Secrets / local env
+#-------------------------
+# Template (commit): file `env` (no leading dot).
+# Runtime secrets (never commit):
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+auth.json
+credentials.json
+id_rsa
+id_rsa.pub
+
+#-------------------------
+# CodeIgniter writable (runtime only)
+# Keep directory placeholders; ignore all generated content.
+#-------------------------
+/writable/cache/**
+!/writable/cache/index.html
+
+/writable/logs/**
+!/writable/logs/index.html
+
+/writable/session/**
+!/writable/session/index.html
+
+/writable/uploads/**
+!/writable/uploads/index.html
+
+/writable/debugbar/**
+!/writable/debugbar/index.html
+
+# Any future runtime subdirs under writable
+/writable/**/*
+!/writable/**/
+!/writable/**/index.html
+!/writable/.htaccess
+!/writable/index.html
+
+php_errors.log
+*.log
+
+#-------------------------
+# Dependencies
+#-------------------------
+/vendor/
+/node_modules/
+
+#-------------------------
+# Build / coverage / test artifacts
+#-------------------------
+/build/
+/coverage/
+/tmp/
+/temp/
+.phpunit.result.cache
+.phpunit.cache
+phpunit.result.cache
+.phpunit.cache/
+clover.xml
+junit.xml
+*.lcov
+
+#-------------------------
+# Tooling / agents / local scratch
+#-------------------------
+.scannerwork/
+.sonar/
+.idea/
+*.iml
+.vscode/
+.fleet/
+.cursor/
+.claude/
+.grok/
+.review/
+.ci4-tmp/
+*.swp
+*.swo
+.php-version
+.phpintel
+/nbproject/
+*.sublime-workspace
+*.sublime-project
+
+#-------------------------
+# Docker / local overrides
+#-------------------------
+docker-compose.override.yml
+docker-compose*.local.yml
+
+#-------------------------
+# Database dumps / backups (local)
+#-------------------------
+*.sql
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.db
+*.bak
+*.tmp
+*.temp
+
+#-------------------------
+# Generated / local media
+#-------------------------
+*.pdf
+!docs/**/*.pdf
+public/uploads/
+
+#-------------------------
+# Project extras (not for repo)
+#-------------------------
+# Large proposal binary — keep local only
+docs/PROPOSAL*.docx
+PROPOSAL*.docx
+*.docx
+!docs/**/*.md

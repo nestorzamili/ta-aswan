@@ -4,13 +4,13 @@
 
 ## Identitas Penelitian
 
-| Item | Nilai |
-|------|-------|
-| Judul | Rancang Bangun Sistem Informasi Inventory Sparepart dan Aksesoris Berbasis Web Pada Toko Android Service Dengan Model Prototyping |
-| Peneliti | Aswandi Zamili (NIM 0425720122) |
-| Institusi | Program Studi Sistem Informasi, Universitas Nias Raya |
-| Tahun | 2026 |
-| Lokasi | Toko Android Service Teluk Dalam, Jl. Diponegoro nari-nari, Kec. Teluk Dalam, Kab. Nias Selatan, Sumatera Utara |
+| Item      | Nilai                                                                                                                             |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Judul     | Rancang Bangun Sistem Informasi Inventory Sparepart dan Aksesoris Berbasis Web Pada Toko Android Service Dengan Model Prototyping |
+| Peneliti  | Aswandi Zamili (NIM 0425720122)                                                                                                   |
+| Institusi | Program Studi Sistem Informasi, Universitas Nias Raya                                                                             |
+| Tahun     | 2026                                                                                                                              |
+| Lokasi    | Toko Android Service Teluk Dalam, Jl. Diponegoro nari-nari, Kec. Teluk Dalam, Kab. Nias Selatan, Sumatera Utara                   |
 
 ## Latar Belakang
 
@@ -30,12 +30,12 @@ Toko Android Service bergerak di bidang perbaikan perangkat Android serta penjua
 
 ## Jenis & Pendekatan
 
-| Aspek | Keterangan |
-|-------|------------|
-| Jenis | Research and Development (R&D) |
-| Pendekatan | Kualitatif |
+| Aspek               | Keterangan                                      |
+| ------------------- | ----------------------------------------------- |
+| Jenis               | Research and Development (R&D)                  |
+| Pendekatan          | Kualitatif                                      |
 | Metode pengembangan | Prototyping (iteratif dengan evaluasi pengguna) |
-| Pengujian | Black Box Testing |
+| Pengujian           | Black Box Testing                               |
 
 ## Scope Sistem
 
@@ -54,18 +54,18 @@ Toko Android Service bergerak di bidang perbaikan perangkat Android serta penjua
 
 - Manajemen layanan perbaikan perangkat Android
 - Integrasi QR Code (hanya disebut di penelitian relevan, bukan scope proposal ini)
-- Deployment ke server production (fokus lingkungan lokal XAMPP)
+- Deployment ke server production (fokus lingkungan development lokal)
 
 ### Batasan Teknis
 
-| Batasan | Nilai |
-|---------|-------|
-| Bahasa pemrograman | PHP 8.3+ |
-| Framework | CodeIgniter 4.7.3 |
-| Database | MySQL 8.4 · `db_inventory_android` |
-| Package manager | Composer 2.x |
-| Server lokal | XAMPP (Apache 2.4) |
-| Model pengembangan | Prototyping |
+| Batasan            | Nilai                                    |
+| ------------------ | ---------------------------------------- |
+| Bahasa pemrograman | PHP 8.3+ (host)                          |
+| Framework          | CodeIgniter 4.7.3                        |
+| Database           | MySQL 8.4 · `inventory_android` (Docker) |
+| Package manager    | Composer 2.x                             |
+| Server lokal       | `php spark serve` (PHP built-in server)  |
+| Model pengembangan | Prototyping                              |
 
 Detail stack lengkap: [06-implementasi-pengujian.md](06-implementasi-pengujian.md).
 
@@ -83,23 +83,23 @@ flowchart TD
     G --> H[Maintenance]
 ```
 
-| Tahap | Aktivitas | Output |
-|-------|-----------|--------|
+| Tahap                    | Aktivitas                                                 | Output                     |
+| ------------------------ | --------------------------------------------------------- | -------------------------- |
 | 1. Pengumpulan kebutuhan | Observasi, wawancara, dokumentasi di Toko Android Service | Daftar kebutuhan & masalah |
-| 2. Membangun prototype | Desain UI + alur sistem | Mockup / prototype awal |
-| 3. Evaluasi prototype | Review oleh admin toko | Masukan & daftar perbaikan |
-| 4. Perbaikan prototype | Iterasi berdasarkan masukan | Prototype revisi |
-| 5. Implementasi | Coding PHP 8.3 + CI4 + MySQL 8.4 | Aplikasi berjalan |
-| 6. Verification | Black box testing | Laporan uji |
-| 7. Maintenance | Perbaikan & penyesuaian | Sistem stabil |
+| 2. Membangun prototype   | Desain UI + alur sistem                                   | Mockup / prototype awal    |
+| 3. Evaluasi prototype    | Review oleh admin toko                                    | Masukan & daftar perbaikan |
+| 4. Perbaikan prototype   | Iterasi berdasarkan masukan                               | Prototype revisi           |
+| 5. Implementasi          | Coding PHP 8.3 + CI4 + MySQL 8.4                          | Aplikasi berjalan          |
+| 6. Verification          | Black box testing                                         | Laporan uji                |
+| 7. Maintenance           | Perbaikan & penyesuaian                                   | Sistem stabil              |
 
 ### Instrumen Pengumpulan Data
 
-| Instrumen | Fokus |
-|-----------|-------|
-| Wawancara semi-terstruktur | Proses inventory, kendala, kebutuhan fitur & laporan |
-| Observasi | Pencatatan manual, alur barang masuk/keluar, monitoring stok |
-| Dokumentasi | Nota penjualan, data stok, laporan, struktur organisasi |
+| Instrumen                  | Fokus                                                        |
+| -------------------------- | ------------------------------------------------------------ |
+| Wawancara semi-terstruktur | Proses inventory, kendala, kebutuhan fitur & laporan         |
+| Observasi                  | Pencatatan manual, alur barang masuk/keluar, monitoring stok |
+| Dokumentasi                | Nota penjualan, data stok, laporan, struktur organisasi      |
 
 ### Kelebihan Metode
 

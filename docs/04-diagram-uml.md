@@ -41,14 +41,14 @@ flowchart LR
     admin --> UC11
 ```
 
-| Use Case Admin | Operasi |
-|----------------|---------|
-| Kelola Sparepart | Lihat, tambah, edit, hapus¹ |
-| Kelola Aksesoris | Lihat, tambah, edit, hapus¹ |
-| Barang Masuk | Tambah, lihat, cetak, **hapus** |
-| Barang Keluar | Tambah, **edit**, lihat, cetak, **hapus** |
-| Kelola Supplier | Lihat, tambah, edit, hapus |
-| Kelola Pengguna | Lihat, tambah, edit, hapus |
+| Use Case Admin   | Operasi                                   |
+| ---------------- | ----------------------------------------- |
+| Kelola Sparepart | Lihat, tambah, edit, hapus¹               |
+| Kelola Aksesoris | Lihat, tambah, edit, hapus¹               |
+| Barang Masuk     | Tambah, lihat, cetak, **hapus**           |
+| Barang Keluar    | Tambah, **edit**, lihat, cetak, **hapus** |
+| Kelola Supplier  | Lihat, tambah, edit, hapus                |
+| Kelola Pengguna  | Lihat, tambah, edit, hapus                |
 
 ¹ Hapus barang ditolak jika sudah ada riwayat transaksi.
 
@@ -83,33 +83,33 @@ flowchart LR
     karyawan --> UC10
 ```
 
-| Use Case Karyawan | Operasi |
-|-------------------|---------|
-| Kelola Sparepart | Lihat, tambah, edit |
-| Kelola Aksesoris | Lihat, tambah, edit |
-| Barang Masuk | Tambah, lihat, cetak |
-| Barang Keluar | Tambah, lihat, cetak |
-| Lihat Supplier | Referensi saat input barang masuk |
+| Use Case Karyawan | Operasi                           |
+| ----------------- | --------------------------------- |
+| Kelola Sparepart  | Lihat, tambah, edit               |
+| Kelola Aksesoris  | Lihat, tambah, edit               |
+| Barang Masuk      | Tambah, lihat, cetak              |
+| Barang Keluar     | Tambah, lihat, cetak              |
+| Lihat Supplier    | Referensi saat input barang masuk |
 
-| ID | Use Case | Admin | Karyawan |
-|----|----------|:-----:|:--------:|
-| UC01 | Login | ✓ | ✓ |
-| UC02 | Kelola Sparepart | CRUD penuh | Lihat, tambah, edit |
-| UC03 | Kelola Aksesoris | CRUD penuh | Lihat, tambah, edit |
-| UC04 | Barang Masuk | + hapus | Tambah, lihat, cetak |
-| UC05 | Barang Keluar | + hapus, edit | Tambah, lihat, cetak |
-| UC06 | Monitoring Stok | ✓ | ✓ |
-| UC07 | Kelola Supplier | CRUD | Lihat saja |
-| UC08 | Laporan Inventory | ✓ | ✓ |
-| UC09 | Kelola Pengguna | ✓ | ✗ |
-| UC10 | Lupa Password | ✓ | ✓ |
-| UC11 | Logout | ✓ | ✓ |
+| ID   | Use Case          |     Admin     |       Karyawan       |
+| ---- | ----------------- | :-----------: | :------------------: |
+| UC01 | Login             |       ✓       |          ✓           |
+| UC02 | Kelola Sparepart  |  CRUD penuh   | Lihat, tambah, edit  |
+| UC03 | Kelola Aksesoris  |  CRUD penuh   | Lihat, tambah, edit  |
+| UC04 | Barang Masuk      |    + hapus    | Tambah, lihat, cetak |
+| UC05 | Barang Keluar     | + hapus, edit | Tambah, lihat, cetak |
+| UC06 | Monitoring Stok   |       ✓       |          ✓           |
+| UC07 | Kelola Supplier   |     CRUD      |      Lihat saja      |
+| UC08 | Laporan Inventory |       ✓       |          ✓           |
+| UC09 | Kelola Pengguna   |       ✓       |          ✗           |
+| UC10 | Lupa Password     |       ✓       |          ✓           |
+| UC11 | Logout            |       ✓       |          ✓           |
 
-| Relasi | Keterangan |
-|--------|------------|
-| Login `<<include>>` semua UC | Session aktif diperlukan |
-| Barang Masuk/Keluar `<<extend>>` Update Stok | Stok diperbarui saat **simpan**, bukan saat hapus |
-| Lupa Password `<<include>>` Kirim Email | Token reset dikirim ke email terdaftar |
+| Relasi                                       | Keterangan                                                       |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| Login `<<include>>` semua UC                 | Session aktif diperlukan                                         |
+| Barang Masuk/Keluar `<<extend>>` Update Stok | Stok diperbarui saat **simpan**; saat **hapus** stok di-rollback |
+| Lupa Password `<<include>>` Kirim Email      | Token reset dikirim ke email terdaftar                           |
 
 ---
 
@@ -126,22 +126,12 @@ classDiagram
         +login()
         +logout()
     }
-    class Sparepart {
-        +int id_sparepart
-        +string kode_sparepart
+    class Barang {
+        +int id_barang
+        +enum tipe_barang
+        +string kode_barang
         +string kode_manual
-        +string nama_sparepart
-        +string kategori
-        +decimal harga_beli
-        +decimal harga_jual
-        +int stok
-        +enum status_stok
-    }
-    class Aksesoris {
-        +int id_aksesoris
-        +string kode_aksesoris
-        +string kode_manual
-        +string nama_aksesoris
+        +string nama_barang
         +string kategori
         +decimal harga_beli
         +decimal harga_jual
@@ -162,9 +152,10 @@ classDiagram
     }
     class DetailMasuk {
         +int id_detail_masuk
-        +enum tipe_barang
         +int id_barang
         +int quantity
+        +decimal harga_satuan
+        +decimal subtotal
     }
     class BarangKeluar {
         +int id_keluar
@@ -175,9 +166,10 @@ classDiagram
     }
     class DetailKeluar {
         +int id_detail_keluar
-        +enum tipe_barang
         +int id_barang
         +int quantity
+        +decimal harga_satuan
+        +decimal subtotal
     }
     class LaporanService {
         +generatePDF(jenis, periode)
@@ -187,13 +179,16 @@ classDiagram
     Supplier "1" --> "*" BarangMasuk
     BarangMasuk "1" --> "*" DetailMasuk
     BarangKeluar "1" --> "*" DetailKeluar
+    Barang "1" --> "*" DetailMasuk
+    Barang "1" --> "*" DetailKeluar
     Admin ..> LaporanService : generate
 ```
 
-| Catatan | Keterangan |
-|---------|------------|
-| LaporanService | On-the-fly PDF, bukan entitas DB |
-| DetailMasuk/Keluar | Polymorphic via `tipe_barang` + `id_barang` |
+| Catatan            | Keterangan                                                               |
+| ------------------ | ------------------------------------------------------------------------ |
+| LaporanService     | On-the-fly PDF, bukan entitas DB                                         |
+| Barang             | Unifikasi sparepart + aksesoris (`tipe_barang`) — UI tetap menu terpisah |
+| DetailMasuk/Keluar | FK `id_barang` → `barang`                                                |
 
 ---
 
