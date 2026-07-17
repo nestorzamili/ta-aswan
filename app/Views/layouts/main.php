@@ -112,8 +112,8 @@ $flashSuccess     = session()->getFlashdata('success');
             <button type="button" class="menu-toggle" id="mobileMenuToggle" aria-controls="sidebarNav" aria-expanded="false" aria-label="Buka menu navigasi">
                 <i class="bi bi-list" aria-hidden="true"></i>
             </button>
-            <button type="button" class="btn-action-menu d-none d-md-flex align-items-center justify-content-center border-0 bg-transparent" id="desktopMenuToggle" aria-label="Ciutkan menu samping" style="color: var(--ink);">
-                <i class="bi bi-list fs-5" aria-hidden="true"></i>
+            <button type="button" class="sidebar-collapse-toggle d-none d-md-inline-flex" id="desktopMenuToggle" aria-controls="sidebarNav" aria-expanded="true" aria-label="Ciutkan menu samping">
+                <i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>
             </button>
             <h1><?= esc($title ?? 'Dashboard') ?></h1>
         </div>
@@ -194,9 +194,22 @@ document.querySelectorAll('.btn-action-menu').forEach((btn) => {
 
 const desktopToggle = document.getElementById('desktopMenuToggle');
 if (desktopToggle) {
+  const desktopIcon = desktopToggle.querySelector('i');
+  const syncDesktopToggle = () => {
+    const collapsed = document.body.classList.contains('sidebar-collapsed');
+    desktopToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    desktopToggle.setAttribute('aria-label', collapsed ? 'Bentangkan menu samping' : 'Ciutkan menu samping');
+    if (desktopIcon) {
+      desktopIcon.className = collapsed
+        ? 'bi bi-layout-sidebar'
+        : 'bi bi-layout-sidebar-inset';
+    }
+  };
+  syncDesktopToggle();
   desktopToggle.addEventListener('click', () => {
     document.body.classList.toggle('sidebar-collapsed');
     localStorage.setItem('sidebar-collapsed', document.body.classList.contains('sidebar-collapsed'));
+    syncDesktopToggle();
     document.querySelectorAll('[data-tooltip]').forEach((el) => {
       const instance = bootstrap.Tooltip.getInstance(el);
       if (instance) instance.hide();
