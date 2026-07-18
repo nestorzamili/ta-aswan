@@ -17,7 +17,7 @@ concurrency:
 jobs:
   deploy:
     name: Build and Deploy
-    uses: nestorzamili/gha-workflows/.github/workflows/deploy-container.yml@v1.5.1
+    uses: nestorzamili/gha-workflows/.github/workflows/deploy-container.yml@v1.5.2
     with:
       image-name: ta-aswan
       container-name: ta-aswan
