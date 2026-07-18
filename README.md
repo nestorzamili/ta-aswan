@@ -57,7 +57,7 @@ Gunakan kredensial berikut untuk masuk pertama kali:
 - PR → [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 - main → [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) via [gha-workflows](https://github.com/nestorzamili/gha-workflows)
 
-Environment `production` secrets: `SSH_CONFIG`, `GHCR_USERNAME`, `GHCR_TOKEN`, `ENV_FILE` (CodeIgniter `.env` contents).
+Environment `production` secrets: `SSH_CONFIG`, `GHCR_USERNAME`, `GHCR_TOKEN`, `ENV_FILE` (CI4 `.env` → `/var/www/html/.env`).
 
 VM (sekali): Docker, network `proxy`, Caddy,  
 `mkdir -p /var/lib/ta-aswan/writable && chown -R 82:82 /var/lib/ta-aswan/writable`  
