@@ -17,7 +17,7 @@ concurrency:
 jobs:
   deploy:
     name: Build and Deploy
-    uses: nestorzamili/gha-workflows/.github/workflows/deploy-container.yml@v1.4.0
+    uses: nestorzamili/gha-workflows/.github/workflows/deploy-container.yml@v1.5.0
     with:
       image-name: ta-aswan
       container-name: ta-aswan
@@ -25,4 +25,5 @@ jobs:
       health-cmd: "wget -qO- --header=User-Agent:Docker-Healthcheck http://127.0.0.1/health || exit 1"
       docker-context-name: ta-aswan-vm
       environment: production
+      env-file-container-path: /var/www/html/.env
     secrets: inherit
