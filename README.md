@@ -57,13 +57,7 @@ Gunakan kredensial berikut untuk masuk pertama kali:
 - PR → [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 - main → [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) via [gha-workflows](https://github.com/nestorzamili/gha-workflows)
 
-Environment `production` secrets: `SSH_CONFIG`, `GHCR_USERNAME`, `GHCR_TOKEN`, `ENV_FILE` (CI4 `.env` → `/var/www/html/.env`).
+Environment `production` secrets: `SSH_CONFIG`, `ENV_FILE` (CI4 `.env` → `/var/www/html/.env`).
 
-VM (sekali): Docker, network `proxy`, Caddy,  
-`mkdir -p /var/lib/ta-aswan/writable && chown -R 82:82 /var/lib/ta-aswan/writable`  
-(www-data UID 82 on Alpine).
-
-## Build notes
-
-Docker builds target the VM arch from `SSH_CONFIG` (`platform=`).  
-Composer runs on the runner native arch; PHP extensions install in the final image (slow under QEMU when runner is amd64 and VM is arm64).
+Buat folder di vm prod
+`mkdir -p /var/lib/ta-aswan/writable/{cache,debugbar,logs,session,uploads} && chown -R 82:82 /var/lib/ta-aswan/writable`
