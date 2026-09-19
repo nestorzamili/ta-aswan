@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Libraries\AuditService;
 use App\Libraries\BarangLookup;
 use App\Libraries\NumberingService;
 use App\Libraries\PdfService;
@@ -73,5 +74,14 @@ class Services extends BaseService
         }
 
         return new \App\Libraries\DashboardService();
+    }
+
+    public static function audit(bool $getShared = true): AuditService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('audit');
+        }
+
+        return new AuditService();
     }
 }

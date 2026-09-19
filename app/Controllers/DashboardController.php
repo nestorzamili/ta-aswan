@@ -2,8 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\BarangModel;
-
 class DashboardController extends BaseController
 {
     public function index()

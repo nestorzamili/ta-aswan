@@ -9,7 +9,7 @@ class AksesorisController extends BarangController
     protected function cfg(): array
     {
         return [
-            'label' => 'Aksesoris',
+            'label' => 'Aksesori',
             'route' => 'aksesoris',
             'kode'  => 'kode_barang',
             'nama'  => 'nama_barang',

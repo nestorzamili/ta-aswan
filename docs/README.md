@@ -11,26 +11,27 @@ Requirement pengembangan web berdasarkan **PROPOSAL ASWANDI BAB 1-3.docx**.
 
 ## Stack Ringkas
 
-PHP 8.3+ (host) · CodeIgniter 4.7.3 · MySQL 8.4 Docker (`inventory_android`) · `php spark serve` · Dompdf · Bootstrap 5.3 + Chart.js 4 · Resend (menyusul)
+PHP 8.2+ (host, Windows) · CodeIgniter 4.7 · MySQL 8.x (`db_inventory`) · `php spark serve` · Dompdf · Bootstrap 5.3 + Chart.js 4 · PHP-CS-Fixer + PHPStan (CI)
 
 Detail lengkap: [06-implementasi-pengujian.md](06-implementasi-pengujian.md)
 
 ## Lingkungan Development
 
-| Komponen       | Lokasi                             | Perintah                      |
-| -------------- | ---------------------------------- | ----------------------------- |
-| MySQL 8.4      | Container `mysql` (Docker Compose) | `docker compose up -d`        |
-| PHP + Composer | Host (CachyOS)                     | `php spark serve --port 8080` |
-| Email          | Belum (Resend nanti)               | —                             |
+Aplikasi dijalankan langsung di host (tanpa Docker). MySQL memakai instance/kontainer yang sudah tersedia dengan port `3306` ter-expose ke `localhost`.
 
-| Setting         | Nilai dev                                                  |
-| --------------- | ---------------------------------------------------------- |
-| Host / port     | `127.0.0.1:3306` (bind localhost saja, sama pola postgres) |
-| Database        | `inventory_android`                                        |
-| User / password | `aswan` / `Samunu123`                                      |
-| Root password   | `Samunu123`                                                |
+| Komponen       | Lokasi                              | Perintah                      |
+| -------------- | ----------------------------------- | ----------------------------- |
+| PHP + Composer | Host (Windows — Laragon/XAMPP)      | `php spark serve --port 8080` |
+| MySQL 8.x      | Server/kontainer existing di `3306` | —                             |
+| Email          | Opsional (reset password)           | —                             |
 
-Salin `.env.example` → `.env` untuk Docker Compose.
+| Setting         | Nilai dev                                                     |
+| --------------- | ------------------------------------------------------------- |
+| Host / port     | `127.0.0.1:3306` (gunakan TCP, bukan socket)                  |
+| Database        | `db_inventory`                                                |
+| User / password | `<user>` / `<password>` (isi di `.env`, jangan commit)        |
+
+Salin `env` → `.env` lalu sesuaikan koneksi database.
 
 ## Daftar Dokumen
 
@@ -39,18 +40,12 @@ Struktur disusun selaras bab penelitian — **6 dokumen inti**, tanpa duplikasi 
 | No  | Dokumen                                                   | Isi                                               | Padanan Skripsi       |
 | --- | --------------------------------------------------------- | ------------------------------------------------- | --------------------- |
 | 01  | [konteks-penelitian.md](01-konteks-penelitian.md)         | Latar belakang, tujuan, scope, metode prototyping | Bab I–II              |
-| 02  | [kebutuhan-sistem.md](02-kebutuhan-sistem.md)             | Aktor, aturan bisnis, 10 modul fitur, dashboard   | Bab III (kebutuhan)   |
+| 02  | [kebutuhan-sistem.md](02-kebutuhan-sistem.md)             | Aktor, aturan bisnis, modul fitur, dashboard      | Bab III (kebutuhan)   |
 | 03  | [alur-antarmuka.md](03-alur-antarmuka.md)                 | Navigasi, layout, activity diagram                | Bab III (desain UI)   |
 | 04  | [diagram-uml.md](04-diagram-uml.md)                       | Use case, class, sequence diagram                 | Bab III (UML)         |
 | 05  | [desain-database.md](05-desain-database.md)               | ERD, skema tabel, seed data                       | Bab III (desain data) |
 | 06  | [implementasi-pengujian.md](06-implementasi-pengujian.md) | Stack, NFR, black box testing, roadmap            | Bab III–IV            |
-
-## Konfigurasi Menyusul
-
-| Item           | Lokasi                                                                |
-| -------------- | --------------------------------------------------------------------- |
-| Domain Resend  | [06-implementasi-pengujian.md](06-implementasi-pengujian.md) → `.env` |
-| API key Resend | [06-implementasi-pengujian.md](06-implementasi-pengujian.md) → `.env` |
+| 07  | [lampiran-kode.md](07-lampiran-kode.md)                   | Kode program inti per fitur                        | Lampiran              |
 
 ## Referensi
 

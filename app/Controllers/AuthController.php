@@ -47,7 +47,9 @@ class AuthController extends BaseController
                     'username'   => $admin['username'],
                     'nama'       => $admin['nama'],
                     'level'      => $admin['level'],
+                    'foto'       => $admin['foto'] ?? null,
                 ]);
+                log_activity('login', 'auth', (int) $admin['id_admin'], 'Login: ' . $admin['username']);
                 $response = redirect()->to('/dashboard')->with('success', 'Selamat datang, ' . $admin['nama']);
             } else {
                 $response = $this->redirectBackWithFieldErrors(
@@ -65,6 +67,7 @@ class AuthController extends BaseController
 
     public function logout()
     {
+        log_activity('logout', 'auth', session('id_admin') !== null ? (int) session('id_admin') : null, 'Logout: ' . (string) session('username'));
         session()->destroy();
 
         return redirect()->to(self::ROUTE_LOGIN);

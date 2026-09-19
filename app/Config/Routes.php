@@ -62,6 +62,13 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('laporan', 'LaporanController::index');
     $routes->post('laporan/pdf', 'LaporanController::pdf');
 
+    $routes->get('profil', 'ProfileController::index');
+    $routes->post('profil', 'ProfileController::update');
+    $routes->post('profil/password', 'ProfileController::updatePassword');
+    $routes->post('profil/foto', 'ProfileController::updateFoto');
+    $routes->post('profil/foto/hapus', 'ProfileController::deleteFoto');
+    $routes->get('profil/foto', 'ProfileController::serveFoto');
+
     $routes->group('', ['filter' => 'role:admin'], static function ($routes) {
         $routes->post('sparepart/(:num)/delete', 'SparepartController::delete/$1');
         $routes->post('aksesoris/(:num)/delete', 'AksesorisController::delete/$1');

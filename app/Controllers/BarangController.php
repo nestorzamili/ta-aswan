@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\BarangModel;
-use CodeIgniter\Model;
 
 abstract class BarangController extends BaseController
 {
@@ -11,7 +10,7 @@ abstract class BarangController extends BaseController
 
     abstract protected function cfg(): array;
 
-    protected function model(): Model
+    protected function model(): BarangModel
     {
         return new BarangModel();
     }
@@ -68,8 +67,8 @@ abstract class BarangController extends BaseController
             'merk'      => $merk,
             'status'    => $status,
             'perPage'   => $perPage,
-            'kategoris' => array_column($m->db->table($m->table)->select('kategori')->distinct()->where('tipe_barang', $this->tipe)->where('kategori !=', '')->get()->getResultArray(), 'kategori'),
-            'merks'     => array_column($m->db->table($m->table)->select('merk')->distinct()->where('tipe_barang', $this->tipe)->where('merk !=', '')->get()->getResultArray(), 'merk'),
+            'kategoris' => $m->distinctKategori($this->tipe),
+            'merks'     => $m->distinctMerk($this->tipe),
         ]);
     }
 
@@ -96,6 +95,8 @@ abstract class BarangController extends BaseController
         $data[$c['kode']]    = $this->nextKode();
         $data                = service('stock')->setStatusForRow($data);
         $this->model()->insert($data);
+
+        log_activity('create', $this->tipe, (int) $this->model()->getInsertID(), 'Menambah ' . $c['label'] . ': ' . $data[$c['nama']]);
 
         return redirect()->to('/' . $c['route'])->with('success', $c['label'] . ' berhasil ditambahkan.');
     }
@@ -130,6 +131,8 @@ abstract class BarangController extends BaseController
         $data[$c['kode']] = $item[$c['kode']];
         $this->model()->update($id, $data);
 
+        log_activity('update', $this->tipe, (int) $id, 'Mengubah ' . $c['label'] . ': ' . $data[$c['nama']]);
+
         return redirect()->to('/' . $c['route'])->with('success', $c['label'] . ' diperbarui.');
     }
 
@@ -146,6 +149,8 @@ abstract class BarangController extends BaseController
                 ->with('error', 'Tidak dapat dihapus: sudah ada riwayat transaksi.');
         }
         $this->model()->delete($id);
+
+        log_activity('delete', $this->tipe, (int) $id, 'Menghapus ' . $c['label'] . ': ' . ($item[$c['nama']] ?? ('#' . $id)));
 
         return redirect()->to('/' . $c['route'])->with('success', $c['label'] . ' dihapus.');
     }

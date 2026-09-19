@@ -36,6 +36,7 @@ Dokumen ini memuat aktor, aturan bisnis, dan spesifikasi modul. **Aturan bisnis*
 | Supplier — tambah/edit/hapus       |   ✓   |    ✗     |
 | Laporan — lihat/cetak              |   ✓   |    ✓     |
 | Kelola Pengguna                    |   ✓   |    ✗     |
+| Profil sendiri (data, foto, sandi) |   ✓   |    ✓     |
 | Lupa Password (email)              |   ✓   |    ✓     |
 
 ¹ Hapus barang **ditolak** jika sudah ada riwayat transaksi (semua role).
@@ -58,8 +59,8 @@ Implementasi: CI4 **Filter** per route (`AuthFilter` + `RoleFilter`).
 
 | Item          | Nilai               |
 | ------------- | ------------------- |
-| Nama database | `inventory_android` |
-| Engine        | MySQL 8.4           |
+| Nama database | `db_inventory`      |
+| Engine        | MySQL 8.x           |
 
 ### Supplier
 
@@ -141,13 +142,13 @@ Alur: pilih jenis + filter periode → query DB → render PDF (Dompdf) → down
 
 | Item               | Nilai                                       |
 | ------------------ | ------------------------------------------- |
-| Provider           | Resend.com — dev & production               |
+| Pengiriman email   | CI4 Email (SMTP, dikonfigurasi via `.env`)  |
 | Masa berlaku token | **60 menit**                                |
 | Token              | Sekali pakai, tabel `password_reset_tokens` |
 
-Alur: input email → generate token → kirim link via Resend → set password baru → token di-mark `used_at`.
+Alur: input email → generate token → kirim link via email → set password baru → token di-mark `used_at`.
 
-Konfigurasi Resend (domain & API key **menyusul**): [06-implementasi-pengujian.md](06-implementasi-pengujian.md).
+Konfigurasi SMTP (opsional): [06-implementasi-pengujian.md](06-implementasi-pengujian.md).
 
 ---
 
@@ -165,6 +166,9 @@ Konfigurasi Resend (domain & API key **menyusul**): [06-implementasi-pengujian.m
 | 8   | Supplier        | CRUD pemasok                              |
 | 9   | Laporan         | Stok, masuk, keluar + cetak               |
 | 10  | Pengguna        | CRUD pengguna (admin & karyawan)          |
+| 11  | Profil          | Ubah data diri, foto profil, ganti sandi  |
+
+> **Audit trail** (lintas modul): aktivitas create/update/delete entitas utama serta login/logout dicatat otomatis ke tabel `activity_logs` (lihat §2).
 
 ### 3.1 Autentikasi
 
@@ -182,9 +186,9 @@ UI: Bootstrap 5.3 + Chart.js 4 + Bootstrap Icons. Layout card-based, responsive.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ Header: judul, tanggal/waktu real-time, nama user       │
-├──────────┬──────────┬──────────┬──────────────────────┤
-│ KPI 1    │ KPI 2    │ KPI 3    │ KPI 4                │
+│ Header: judul, tanggal/waktu real-time, menu profil     │
+├──────┬──────┬──────┬──────┬──────┬──────────────────────┤
+│ KPI1 │ KPI2 │ KPI3 │ KPI4 │ KPI5 │ KPI6                 │
 ├────────────────────────────┬────────────────────────────┤
 │ Donut: Status Stok         │ Bar H: Stok per Kategori  │
 ├────────────────────────────┴────────────────────────────┤
@@ -196,7 +200,7 @@ UI: Bootstrap 5.3 + Chart.js 4 + Bootstrap Icons. Layout card-based, responsive.
 
 | Komponen          | Visual             | Metrik                                                     |
 | ----------------- | ------------------ | ---------------------------------------------------------- |
-| KPI cards (×4)    | Angka + ikon       | Total sparepart, aksesoris, unit stok, transaksi bulan ini |
+| KPI cards (×6)    | Angka + ikon       | Total sparepart, aksesori, unit stok, nilai persediaan, total supplier, transaksi 14 hari |
 | Status stok       | **Donut**          | Proporsi aman / rendah / habis                             |
 | Stok per kategori | **Horizontal bar** | Top 8 kategori by `SUM(stok)`                              |
 | Tren transaksi    | **Line**           | Masuk vs keluar, 14 hari terakhir                          |
@@ -207,7 +211,7 @@ Endpoint internal (JSON) untuk Chart.js:
 
 | Endpoint                              | Return                         |
 | ------------------------------------- | ------------------------------ |
-| `GET /dashboard/chart/kpi`            | 4 angka KPI                    |
+| `GET /dashboard/chart/kpi`            | 6 angka KPI                    |
 | `GET /dashboard/chart/status-stok`    | `{ aman, rendah, habis }`      |
 | `GET /dashboard/chart/stok-kategori`  | `[{ kategori, total }]`        |
 | `GET /dashboard/chart/tren-transaksi` | `[{ tanggal, masuk, keluar }]` |
@@ -286,3 +290,29 @@ Generate on-the-fly → download PDF (Dompdf). Cetak transaksi individual juga P
 | status                   | `aktif` / `nonaktif`       |
 
 Operasi hanya **admin**: tambah, edit, hapus. Pencarian & pagination.
+
+### 3.11 Profil Pengguna
+
+Semua pengguna (admin & karyawan) dapat mengelola akun sendiri:
+
+| Fitur          | Deskripsi                                                             |
+| -------------- | --------------------------------------------------------------------- |
+| Ubah data diri | Nama, email, nomor telepon (email unik, tidak boleh dipakai user lain) |
+| Foto profil    | Unggah/ganti/hapus. Format JPG/PNG/WebP, maks 2 MB. Tampil sebagai avatar di topbar |
+| Ganti password | Verifikasi password lama → password baru (min. 6 karakter) + konfirmasi |
+
+Username tidak dapat diubah. Foto disimpan di `writable/uploads/avatars/`.
+
+### 3.12 Audit Trail
+
+Setiap aksi penting dicatat otomatis ke tabel `activity_logs` (lihat [05-desain-database.md](05-desain-database.md)):
+
+| Dicatat                          | Contoh `action` / `entity`          |
+| -------------------------------- | ----------------------------------- |
+| Login & logout                   | `login` / `logout` · `auth`         |
+| CRUD barang (sparepart/aksesori) | `create`/`update`/`delete` · `sparepart`/`aksesoris` |
+| CRUD supplier & pengguna         | `create`/`update`/`delete` · `supplier`/`pengguna` |
+| Transaksi masuk & keluar         | `create`/`update`/`delete` · `barang_masuk`/`barang_keluar` |
+| Perubahan profil sendiri         | `update` · `profil`                 |
+
+Setiap baris menyimpan pelaku (`id_admin`, `nama_admin`), `ip_address`, deskripsi, dan `created_at`.

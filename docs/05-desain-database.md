@@ -2,7 +2,7 @@
 
 [← Kembali ke README](README.md) · [Aturan bisnis](02-kebutuhan-sistem.md#2-aturan-bisnis)
 
-Database: **`inventory_android`** · MySQL 8.4 · Migration CI4 (`php spark migrate`).
+Database: **`db_inventory`** · MySQL 8.x · Migration CI4 (`php spark migrate`).
 
 ---
 
@@ -14,13 +14,16 @@ Kelas logis proposal: **Admin**, **Sparepart**, **Aksesoris**, **Barang Masuk**,
 
 **Implementasi fisik:** Sparepart & Aksesoris digabung ke tabel **`barang`** (`tipe_barang` ENUM). UI tetap menu terpisah.
 
-Entitas tambahan: `supplier`, `detail_masuk`, `detail_keluar`, `password_reset_tokens`.
+Entitas tambahan: `supplier`, `detail_masuk`, `detail_keluar`, `password_reset_tokens`, `activity_logs` (audit trail).
+
+Tabel `admin`, `barang`, dan `supplier` menggunakan **soft delete** (`deleted_at`).
 
 ```mermaid
 erDiagram
     admin ||--o{ barang_masuk : "mencatat"
     admin ||--o{ barang_keluar : "mencatat"
     admin ||--o{ password_reset_tokens : "reset"
+    admin ||--o{ activity_logs : "melakukan"
     supplier ||--o{ barang_masuk : "memasok"
     barang_masuk ||--|{ detail_masuk : "berisi"
     barang_keluar ||--|{ detail_keluar : "berisi"
@@ -34,8 +37,21 @@ erDiagram
         varchar nama
         varchar email UK
         varchar nomor_telepon
+        varchar foto
         enum level
         enum status
+        datetime deleted_at
+    }
+    activity_logs {
+        int id PK
+        int id_admin FK
+        varchar nama_admin
+        varchar action
+        varchar entity
+        int entity_id
+        varchar description
+        varchar ip_address
+        datetime created_at
     }
     password_reset_tokens {
         int id PK
@@ -135,10 +151,12 @@ erDiagram
 | nama          | VARCHAR(100)             | NOT NULL                     | —              |
 | email         | VARCHAR(100)             | UNIQUE, NOT NULL             | Reset password |
 | nomor_telepon | VARCHAR(20)              | NULL                         | —              |
+| foto          | VARCHAR(255)             | NULL                         | Nama file foto profil |
 | level         | ENUM('admin','karyawan') | NOT NULL, DEFAULT 'karyawan' | —              |
 | status        | ENUM('aktif','nonaktif') | DEFAULT 'aktif'              | —              |
-| created_at    | DATETIME                 | DEFAULT CURRENT_TIMESTAMP    | —              |
-| updated_at    | DATETIME                 | ON UPDATE CURRENT_TIMESTAMP  | —              |
+| created_at    | DATETIME                 | NULL                         | —              |
+| updated_at    | DATETIME                 | NULL                         | —              |
+| deleted_at    | DATETIME                 | NULL                         | Soft delete    |
 
 ### `barang` (sparepart + aksesoris)
 
@@ -153,7 +171,8 @@ Tabel unifikasi. `tipe_barang`: `sparepart` | `aksesoris`. Kode: `SP-YYYY-NNNN` 
 | alamat                 | TEXT         | NULL               |
 | telepon                | VARCHAR(20)  | NULL               |
 | email                  | VARCHAR(100) | NULL               |
-| created_at, updated_at | DATETIME     | —                  |
+| created_at, updated_at | DATETIME     | NULL               |
+| deleted_at             | DATETIME     | NULL (soft delete) |
 
 ### `barang_masuk`
 
@@ -203,10 +222,25 @@ Tabel unifikasi. `tipe_barang`: `sparepart` | `aksesoris`. Kode: `SP-YYYY-NNNN` 
 | used_at    | DATETIME    | NULL                      |
 | created_at | DATETIME    | DEFAULT CURRENT_TIMESTAMP |
 
+### `activity_logs`
+
+Audit trail aktivitas pengguna (create/update/delete entitas utama + login/logout).
+
+| Kolom       | Tipe         | Constraint         | Keterangan                                  |
+| ----------- | ------------ | ------------------ | ------------------------------------------- |
+| id          | INT          | PK, AUTO_INCREMENT | —                                           |
+| id_admin    | INT          | NULL               | Pelaku (null bila sesi tak dikenal)         |
+| nama_admin  | VARCHAR(100) | NULL               | Snapshot nama pelaku                        |
+| action      | VARCHAR(20)  | NOT NULL           | `create`/`update`/`delete`/`login`/`logout` |
+| entity      | VARCHAR(50)  | NULL               | Entitas terkait (mis. `barang`, `supplier`) |
+| entity_id   | INT          | NULL               | ID entitas terkait                          |
+| description | VARCHAR(255) | NULL               | Deskripsi ringkas                           |
+| ip_address  | VARCHAR(45)  | NULL               | IP pelaku                                   |
+| created_at  | DATETIME     | NULL               | Waktu aktivitas                             |
+
 ### Index Rekomendasi
 
 ```sql
-CREATE INDEX idx_sparepart_kategori ON sparepart(kategori);
 CREATE INDEX idx_barang_tipe ON barang(tipe_barang);
 CREATE INDEX idx_barang_tipe_status ON barang(tipe_barang, status_stok);
 CREATE INDEX idx_barang_kategori ON barang(kategori);
@@ -214,6 +248,9 @@ CREATE INDEX idx_barang_masuk_tanggal ON barang_masuk(tanggal_masuk);
 CREATE INDEX idx_barang_keluar_tanggal ON barang_keluar(tanggal_keluar);
 CREATE INDEX idx_detail_masuk_barang ON detail_masuk(id_barang);
 CREATE INDEX idx_detail_keluar_barang ON detail_keluar(id_barang);
+CREATE INDEX idx_activity_logs_created ON activity_logs(created_at);
+CREATE INDEX idx_activity_logs_action ON activity_logs(action);
+CREATE INDEX idx_activity_logs_entity ON activity_logs(entity);
 ```
 
 ---
@@ -222,29 +259,11 @@ CREATE INDEX idx_detail_keluar_barang ON detail_keluar(id_barang);
 
 > Password seed hanya untuk development/demo. Wajib diganti setelah deploy.
 
-Password default semua akun: **`Aswan@2026`**
+**`AdminSeeder`** membuat satu akun admin awal. Password diambil dari `admin.defaultPassword` di `.env` (default `secret` bila tidak diset).
 
-| Nama           | Level      | Username | Email                        |
-| -------------- | ---------- | -------- | ---------------------------- |
-| Perubahan Loi  | `admin`    | `admin`  | `admin@androidservice.local` |
-| Capan Zalogo   | `karyawan` | `capan`  | `capan@androidservice.local` |
-| Rizky Sarumaha | `karyawan` | `rizky`  | `rizky@androidservice.local` |
-
-### Supplier
-
-| Nama                       | Alamat                          | Telepon        |
-| -------------------------- | ------------------------------- | -------------- |
-| PT Sparepart Mobile Medan  | Jl. Gatot Subroto No. 12, Medan | 0812-4400-0001 |
-| Distributor Aksesoris Nias | Jl. Diponegoro, Teluk Dalam     | 0813-5500-0002 |
-
-### Barang (contoh sparepart / aksesoris)
-
-| tipe_barang | kode_barang  | kode_manual  | nama_barang     | kategori | stok | status_stok |
-| ----------- | ------------ | ------------ | --------------- | -------- | ---- | ----------- |
-| sparepart   | SP-2026-0001 | LCD-A3S-OPPO | LCD Oppo A3S    | LCD      | 10   | aman        |
-| sparepart   | SP-2026-0005 | —            | Kamera Belakang | Kamera   | 2    | rendah      |
-| aksesoris   | AK-2026-0001 | —            | Charger Type-C  | Charger  | 20   | aman        |
-| aksesoris   | AK-2026-0005 | —            | Kabel Data USB  | Kabel    | 1    | rendah      |
+| Nama  | Level   | Username | Email             | Password         |
+| ----- | ------- | -------- | ----------------- | ---------------- |
+| Admin | `admin` | `admin`  | `<email_admin>`   | `<password>` (dari `.env`) |
 
 ### Urutan Seed
 

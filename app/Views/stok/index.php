@@ -77,7 +77,7 @@ foreach ($items as $r): ?>
                     'empty_colspan'  => 8,
                     'empty_icon'     => 'bi-layers',
                     'empty_title'    => 'Tidak ada data stok',
-                    'empty_text'     => 'Belum ada sparepart atau aksesoris, atau filter tidak cocok.',
+                    'empty_text'     => 'Belum ada sparepart atau aksesori, atau filter tidak cocok.',
                 ], ['saveData' => false]) ?>
             <?php endif; ?>
             </tbody>

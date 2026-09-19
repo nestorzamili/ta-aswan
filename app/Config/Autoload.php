@@ -11,5 +11,5 @@ class Autoload extends AutoloadConfig
     ];
     public $classmap = [];
     public $files    = [];
-    public $helpers  = ['form_ui'];
+    public $helpers  = ['form_ui', 'audit', 'ui'];
 }

@@ -23,14 +23,15 @@ Urutan menu sesuai mockup proposal (Gambar 3.2):
 | 7   | Supplier       | `/supplier`      | CRUD supplier              |
 | 8   | Laporan        | `/laporan`       | Generate PDF               |
 | 9   | Pengguna       | `/pengguna`      | CRUD pengguna (admin only) |
-| 10  | Logout         | `/logout`        | Keluar sistem              |
+
+**Profil & Logout** diakses melalui **dropdown pengguna** di kanan atas topbar (bukan item sidebar): menu **Profil** (`/profil`) dan tombol **Keluar** (`/logout`).
 
 ### Layout Umum
 
 Setiap halaman (kecuali login) memiliki:
 
 - **Sidebar** — navigasi menu
-- **Header** — tanggal & waktu real-time, info user
+- **Header** — tanggal & waktu real-time, dropdown pengguna (avatar + nama → Profil / Keluar)
 - **Content area** — konten modul
 - **Footer** — nama sistem & tahun
 
@@ -134,3 +135,23 @@ flowchart TD
 1. Pilih jenis (stok / masuk / keluar) + filter periode
 2. Query database on-the-fly
 3. Render Dompdf → download
+
+### Profil
+
+Diakses via dropdown pengguna → **Profil**. Satu halaman berisi kartu identitas (kiri) dan dua section: **Data diri** & **Keamanan**.
+
+```mermaid
+flowchart TD
+    A([Start]) --> B[Buka Profil]
+    B --> C{Aksi}
+    C -->|Ubah foto| D[Klik avatar - pilih file] --> D2{Valid JPG/PNG/WebP <= 2MB?}
+    D2 -->|Ya| D3[Foto tersimpan - avatar diperbarui] --> Z
+    D2 -->|Tidak| D4[Pesan error] --> B
+    C -->|Ubah data diri| E[Klik Edit - ubah nama/email/telepon] --> E2{Valid & email unik?}
+    E2 -->|Ya| E3[Data tersimpan - nama topbar diperbarui] --> Z
+    E2 -->|Tidak| E4[Pesan error] --> B
+    C -->|Ganti password| F[Isi password lama + baru] --> F2{Password lama benar & baru valid?}
+    F2 -->|Ya| F3[Password terganti] --> Z
+    F2 -->|Tidak| F4[Pesan error] --> B
+    Z([End])
+```

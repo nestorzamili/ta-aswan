@@ -37,3 +37,9 @@ jobs:
 
       - name: PHP Syntax Check
         run: find app/ -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      - name: Coding Standard (PHP-CS-Fixer)
+        run: composer cs
+
+      - name: Static Analysis (PHPStan)
+        run: composer analyze

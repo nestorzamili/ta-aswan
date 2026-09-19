@@ -10,7 +10,7 @@ use CodeIgniter\Config\BaseConfig;
 class Store extends BaseConfig
 {
     public string $name    = 'Toko Android Service';
-    public string $tagline = 'Inventory sparepart & aksesoris';
+    public string $tagline = 'Inventory sparepart & aksesori';
     public string $address = 'Teluk Dalam';
     public string $phone   = '';
     public string $email   = '';

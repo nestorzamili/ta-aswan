@@ -92,6 +92,8 @@ class SupplierController extends BaseController
         }
         $this->model->insert($data);
 
+        log_activity('create', 'supplier', (int) $this->model->getInsertID(), 'Menambah supplier: ' . $data['nama_supplier']);
+
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Supplier ditambahkan.');
     }
 
@@ -118,6 +120,8 @@ class SupplierController extends BaseController
         }
         $this->model->update($id, $data);
 
+        log_activity('update', 'supplier', (int) $id, 'Mengubah supplier: ' . $data['nama_supplier']);
+
         return redirect()->to(self::ROUTE_INDEX . '/' . $id)->with('success', 'Supplier diperbarui.');
     }
 
@@ -136,6 +140,8 @@ class SupplierController extends BaseController
             );
         }
         $this->model->delete($id);
+
+        log_activity('delete', 'supplier', (int) $id, 'Menghapus supplier: ' . ($item['nama_supplier'] ?? ('#' . $id)));
 
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Supplier dihapus.');
     }

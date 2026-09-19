@@ -14,7 +14,7 @@ class AdminModel extends Model
     protected $useSoftDeletes   = true;
     protected $deletedField     = 'deleted_at';
     protected $allowedFields    = [
-        'username', 'password', 'nama', 'email', 'nomor_telepon', 'level', 'status', 'deleted_at',
+        'username', 'password', 'nama', 'email', 'nomor_telepon', 'foto', 'level', 'status', 'deleted_at',
     ];
     protected $beforeInsert = ['hashPassword'];
     protected $beforeUpdate = ['hashPassword'];

@@ -91,6 +91,8 @@ class BarangMasukController extends BaseController
             ], $e->getMessage());
         }
 
+        log_activity('create', 'barang_masuk', $idMasuk, 'Menambah barang masuk #' . $idMasuk);
+
         return redirect()->to(self::ROUTE_PREFIX . $idMasuk)->with('success', 'Barang masuk disimpan. Stok diperbarui.');
     }
 
@@ -136,6 +138,8 @@ class BarangMasukController extends BaseController
 
             return redirect()->to(self::ROUTE_INDEX)->with('error', $msg);
         }
+
+        log_activity('delete', 'barang_masuk', (int) $id, 'Menghapus barang masuk #' . $id);
 
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Transaksi dihapus. Stok dikembalikan.');
     }

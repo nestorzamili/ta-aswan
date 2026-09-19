@@ -19,7 +19,10 @@ class LaporanController extends BaseController
 
         $awal  = $this->parseDateFilter($this->request->getPost('tanggal_awal')) ?: date('Y-m-01');
         $akhir = $this->parseDateFilter($this->request->getPost('tanggal_akhir')) ?: date('Y-m-d');
-        $db    = db_connect();
+        if (strtotime($awal) > strtotime($akhir)) {
+            [$awal, $akhir] = [$akhir, $awal];
+        }
+        $db = db_connect();
 
         if ($jenis === 'stok') {
             $items = $db->query('

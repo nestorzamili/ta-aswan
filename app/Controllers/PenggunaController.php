@@ -69,6 +69,8 @@ class PenggunaController extends BaseController
         }
         $this->model->insert($data);
 
+        log_activity('create', 'pengguna', (int) $this->model->getInsertID(), 'Menambah pengguna: ' . $data['username']);
+
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Pengguna ditambahkan.');
     }
 
@@ -90,6 +92,8 @@ class PenggunaController extends BaseController
         }
         $this->model->update($id, $data);
 
+        log_activity('update', 'pengguna', (int) $id, 'Mengubah pengguna: ' . $data['username']);
+
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Pengguna diperbarui.');
     }
 
@@ -99,6 +103,8 @@ class PenggunaController extends BaseController
             return redirect()->to(self::ROUTE_INDEX)->with('error', 'Tidak dapat menghapus akun sendiri.');
         }
         $this->model->delete($id);
+
+        log_activity('delete', 'pengguna', (int) $id, 'Menghapus pengguna #' . $id);
 
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Pengguna dihapus.');
     }

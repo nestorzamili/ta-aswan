@@ -34,42 +34,57 @@ class DashboardService
     public function getStatistikKpi(): array
     {
         $db = db_connect();
-        
+
         $sp = (int) $db->table('barang')->where('tipe_barang', 'sparepart')->where('deleted_at', null)->countAllResults();
         $ak = (int) $db->table('barang')->where('tipe_barang', 'aksesoris')->where('deleted_at', null)->countAllResults();
-        
+
         $unit = (int) $db->query(
-            'SELECT COALESCE(SUM(stok),0) AS t FROM barang WHERE deleted_at IS NULL'
+            'SELECT COALESCE(SUM(stok),0) AS t FROM barang WHERE deleted_at IS NULL',
         )->getRow()->t;
-        
+
+        $nilaiPersediaan = (int) $db->query(
+            'SELECT COALESCE(SUM(stok * harga_beli),0) AS t FROM barang WHERE deleted_at IS NULL',
+        )->getRow()->t;
+
         $kritis = (int) $db->query(
             "SELECT COUNT(*) AS t FROM barang
-             WHERE deleted_at IS NULL AND status_stok IN ('rendah', 'habis')"
+             WHERE deleted_at IS NULL AND status_stok IN ('rendah', 'habis')",
         )->getRow()->t;
-        
-        $bulan = date('Y-m');
-        $trxMasuk = (int) $db->table('barang_masuk')->like('tanggal_masuk', $bulan, 'after')->countAllResults();
-        $trxKeluar = (int) $db->table('barang_keluar')->like('tanggal_keluar', $bulan, 'after')->countAllResults();
+
+        $totalSupplier = (int) $db->table('supplier')->where('deleted_at', null)->countAllResults();
+
+        [$from, $to] = $this->periodeDefault();
+
+        $trxMasuk = (int) $db->table('barang_masuk')
+            ->where('tanggal_masuk >=', $from)
+            ->where('tanggal_masuk <=', $to)
+            ->countAllResults();
+        $trxKeluar = (int) $db->table('barang_keluar')
+            ->where('tanggal_keluar >=', $from)
+            ->where('tanggal_keluar <=', $to)
+            ->countAllResults();
 
         return [
-            'sparepart'   => $sp,
-            'aksesoris'   => $ak,
-            'unit_stok'   => $unit,
-            'trx_bulan'   => $trxMasuk + $trxKeluar,
-            'stok_kritis' => $kritis,
+            'sparepart'        => $sp,
+            'aksesoris'        => $ak,
+            'unit_stok'        => $unit,
+            'nilai_persediaan' => $nilaiPersediaan,
+            'total_supplier'   => $totalSupplier,
+            'trx_bulan'        => $trxMasuk + $trxKeluar,
+            'stok_kritis'      => $kritis,
         ];
     }
 
     public function getStatusStok(): array
     {
-        $db = db_connect();
+        $db   = db_connect();
         $rows = $db->query('
             SELECT status_stok, COUNT(*) AS jml
             FROM barang
             WHERE deleted_at IS NULL
             GROUP BY status_stok
         ')->getResultArray();
-        
+
         $out = ['aman' => 0, 'rendah' => 0, 'habis' => 0];
         foreach ($rows as $r) {
             $out[$r['status_stok']] = (int) $r['jml'];
@@ -92,9 +107,9 @@ class DashboardService
 
     public function getTrenTransaksi(): array
     {
-        $db    = db_connect();
-        $start = date('Y-m-d', strtotime('-13 days'));
-        $end   = date('Y-m-d');
+        $db = db_connect();
+
+        [$from, $to] = $this->periodeDefault();
 
         $query = $db->query("
             SELECT tanggal,
@@ -106,20 +121,33 @@ class DashboardService
                 SELECT tanggal_keluar AS tanggal, 'keluar' AS jenis FROM barang_keluar WHERE tanggal_keluar >= ? AND tanggal_keluar <= ?
             ) t
             GROUP BY tanggal
-        ", [$start, $end, $start, $end])->getResultArray();
+        ", [$from, $to, $from, $to])->getResultArray();
 
         $indexed = array_column($query, null, 'tanggal');
         $out     = [];
 
-        for ($i = 13; $i >= 0; $i--) {
-            $d     = date('Y-m-d', strtotime("-{$i} days"));
+        $cursor = strtotime($from);
+        $last   = strtotime($to);
+        while ($cursor <= $last) {
+            $d     = date('Y-m-d', $cursor);
             $out[] = [
                 'tanggal' => $d,
                 'masuk'   => isset($indexed[$d]) ? (int) $indexed[$d]['masuk'] : 0,
                 'keluar'  => isset($indexed[$d]) ? (int) $indexed[$d]['keluar'] : 0,
             ];
+            $cursor = strtotime('+1 day', $cursor);
         }
 
         return $out;
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    private function periodeDefault(): array
+    {
+        $to = date('Y-m-d');
+
+        return [date('Y-m-d', strtotime('-13 days', strtotime($to))), $to];
     }
 }

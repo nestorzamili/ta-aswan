@@ -1,0 +1,97 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Strict comparison using \!\=\= between ''testing'' and ''production'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Config/Database.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''testing'' and ''testing'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: app/Config/Database.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: app/Config/Events.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''testing'' and ''testing'' will always evaluate to false\.$#'
+			identifier: notIdentical.alwaysFalse
+			count: 1
+			path: app/Config/Events.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''testing'' and ''development'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Config/Events.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''testing'' and ''production'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Config/Logger.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''testing'' and ''production'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Config/Security.php
+
+		-
+			message: '#^Call to function method_exists\(\) with App\\Models\\BarangModel and ''hasTransactionHisto…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Controllers/BarangController.php
+
+		-
+			message: '#^Call to an undefined method CodeIgniter\\Database\\ConnectionInterface\:\:getPrefix\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Database/Migrations/2026-07-13-044510_CreateInventoryTables.php
+
+		-
+			message: '#^Call to an undefined method CodeIgniter\\Database\\ConnectionInterface\:\:prefixTable\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Database/Migrations/2026-07-13-044510_CreateInventoryTables.php
+
+		-
+			message: '#^Parameter \#1 \$fields of method CodeIgniter\\Database\\Forge\:\:addField\(\) expects array\<string, array\|string\>\|string, array\<int\|string, array\<string, bool\|int\|string\>\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Database/Migrations/2026-07-13-044510_CreateInventoryTables.php
+
+		-
+			message: '#^Method App\\Filters\\AuthFilter\:\:after\(\) should return CodeIgniter\\HTTP\\ResponseInterface\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Filters/AuthFilter.php
+
+		-
+			message: '#^Method App\\Filters\\AuthFilter\:\:before\(\) should return CodeIgniter\\HTTP\\RequestInterface\|CodeIgniter\\HTTP\\ResponseInterface\|string\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Filters/AuthFilter.php
+
+		-
+			message: '#^Method App\\Filters\\RoleFilter\:\:after\(\) should return CodeIgniter\\HTTP\\ResponseInterface\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Filters/RoleFilter.php
+
+		-
+			message: '#^Method App\\Filters\\RoleFilter\:\:before\(\) should return CodeIgniter\\HTTP\\RequestInterface\|CodeIgniter\\HTTP\\ResponseInterface\|string\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Filters/RoleFilter.php
+
+		-
+			message: '#^Call to an undefined method CodeIgniter\\HTTP\\RequestInterface\:\:getPost\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Libraries/TransactionLines.php

@@ -27,6 +27,7 @@ flowchart LR
         UC9[Kelola Pengguna]
         UC10[Lupa Password]
         UC11[Logout]
+        UC12[Kelola Profil]
     end
     admin --> UC1
     admin --> UC2
@@ -39,6 +40,7 @@ flowchart LR
     admin --> UC9
     admin --> UC10
     admin --> UC11
+    admin --> UC12
 ```
 
 | Use Case Admin   | Operasi                                   |
@@ -49,6 +51,7 @@ flowchart LR
 | Barang Keluar    | Tambah, **edit**, lihat, cetak, **hapus** |
 | Kelola Supplier  | Lihat, tambah, edit, hapus                |
 | Kelola Pengguna  | Lihat, tambah, edit, hapus                |
+| Kelola Profil    | Ubah data diri, foto, ganti password      |
 
 ¹ Hapus barang ditolak jika sudah ada riwayat transaksi.
 
@@ -70,6 +73,7 @@ flowchart LR
         UC8[Laporan Inventory]
         UC9[Lupa Password]
         UC10[Logout]
+        UC11[Kelola Profil]
     end
     karyawan --> UC1
     karyawan --> UC2
@@ -81,6 +85,7 @@ flowchart LR
     karyawan --> UC8
     karyawan --> UC9
     karyawan --> UC10
+    karyawan --> UC11
 ```
 
 | Use Case Karyawan | Operasi                           |
@@ -104,12 +109,14 @@ flowchart LR
 | UC09 | Kelola Pengguna   |       ✓       |          ✗           |
 | UC10 | Lupa Password     |       ✓       |          ✓           |
 | UC11 | Logout            |       ✓       |          ✓           |
+| UC12 | Kelola Profil     |       ✓       |          ✓           |
 
 | Relasi                                       | Keterangan                                                       |
 | -------------------------------------------- | ---------------------------------------------------------------- |
 | Login `<<include>>` semua UC                 | Session aktif diperlukan                                         |
 | Barang Masuk/Keluar `<<extend>>` Update Stok | Stok diperbarui saat **simpan**; saat **hapus** stok di-rollback |
 | Lupa Password `<<include>>` Kirim Email      | Token reset dikirim ke email terdaftar                           |
+| CRUD & Login/Logout `<<extend>>` Catat Audit | Aktivitas dicatat ke `activity_logs` (audit trail)               |
 
 ---
 
@@ -122,9 +129,24 @@ classDiagram
         +string username
         +string password
         +string email
+        +string foto
         +enum level
+        +enum status
         +login()
         +logout()
+        +updateProfil()
+        +updatePassword()
+    }
+    class ActivityLog {
+        +int id
+        +int id_admin
+        +string nama_admin
+        +string action
+        +string entity
+        +int entity_id
+        +string description
+        +string ip_address
+        +datetime created_at
     }
     class Barang {
         +int id_barang
@@ -182,6 +204,7 @@ classDiagram
     Barang "1" --> "*" DetailMasuk
     Barang "1" --> "*" DetailKeluar
     Admin ..> LaporanService : generate
+    Admin "1" --> "*" ActivityLog : mencatat
 ```
 
 | Catatan            | Keterangan                                                               |
@@ -189,6 +212,7 @@ classDiagram
 | LaporanService     | On-the-fly PDF, bukan entitas DB                                         |
 | Barang             | Unifikasi sparepart + aksesoris (`tipe_barang`) — UI tetap menu terpisah |
 | DetailMasuk/Keluar | FK `id_barang` → `barang`                                                |
+| ActivityLog        | Audit trail; ditulis oleh `AuditService` saat aksi CRUD & login/logout   |
 
 ---
 

@@ -316,15 +316,258 @@ a:hover {
 }
 
 .user-chip .avatar {
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border-radius: 999px;
   background: var(--accent);
   color: #fff;
   display: grid;
   place-items: center;
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   font-weight: 600;
+}
+
+.user-chip .avatar-img {
+  background: transparent;
+  overflow: hidden;
+}
+
+.user-chip .avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-menu {
+  min-width: 15rem;
+  padding-top: 0;
+}
+
+.user-menu-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+}
+
+.user-menu-avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  font-weight: 600;
+  flex: none;
+  overflow: hidden;
+}
+
+.user-menu-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-menu-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-menu-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-menu-role {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.profile-side {
+  position: sticky;
+  top: 1rem;
+}
+
+.profile-side .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+}
+
+.profile-side-photo {
+  margin: 0.25rem 0 0.35rem;
+}
+
+.profile-avatar-edit {
+  position: relative;
+  display: block;
+  width: 116px;
+  height: 116px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 116px;
+  height: 116px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  transition: filter 0.15s ease;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-initial {
+  font-size: 2.8rem;
+  font-weight: 700;
+}
+
+.profile-avatar-cam {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  border: 3px solid var(--surface, #fff);
+  transition: transform 0.15s ease;
+}
+
+.profile-avatar-edit:hover .profile-avatar,
+.profile-avatar-edit:focus-visible .profile-avatar {
+  filter: brightness(0.85);
+}
+
+.profile-avatar-edit:hover .profile-avatar-cam {
+  transform: scale(1.08);
+}
+
+.profile-side-name {
+  margin: 0.35rem 0 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.profile-badge {
+  background: var(--accent);
+  color: #fff;
+}
+
+.profile-side-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  border-top: 1px solid var(--line);
+  padding-top: 0.85rem;
+}
+
+.profile-side-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: var(--text, #1c1917);
+}
+
+.profile-side-list li i {
+  color: var(--muted);
+  flex: none;
+}
+
+.profile-side-list li span {
+  word-break: break-word;
+}
+
+.profile-main .card-body {
+  padding-top: 1.25rem;
+}
+
+.profile-divider {
+  margin: 1.75rem 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.profile-tab-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.profile-tab-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.profile-tab-desc {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.profile-panel-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.profile-form.is-locked input:not([disabled]) {
+  background: var(--surface-2, #f6f3ee);
+  pointer-events: none;
+}
+
+.profile-form.is-locked .profile-panel-actions {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-side {
+    position: static;
+  }
 }
 
 .user-chip .role {

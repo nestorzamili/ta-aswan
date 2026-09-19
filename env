@@ -20,7 +20,7 @@
 
 # app.baseURL = ''
 # If you have trouble with `.`, you could also use `_`.
-# app_baseURL = ''
+# app_baseURL = 'http://localhost:8080'
 # app.forceGlobalSecureRequests = false
 # app.CSPEnabled = false
 
@@ -28,7 +28,8 @@
 # DATABASE
 #--------------------------------------------------------------------
 
-# database.default.hostname = localhost
+# Use 127.0.0.1 (not localhost) so the MySQLi driver connects over TCP.
+# database.default.hostname = 127.0.0.1
 # database.default.database = ci4
 # database.default.username = root
 # database.default.password = root
@@ -68,7 +69,7 @@
 # STORE (PDF header / footer identity)
 #--------------------------------------------------------------------
 # store.name = 'Toko Android Service'
-# store.tagline = 'Inventory sparepart & aksesoris'
+# store.tagline = 'Inventory sparepart & aksesori'
 # store.address = 'Jl. Contoh No. 1, Teluk Dalam'
 # store.phone = '0812xxxxxxxx'
 # store.email = 'toko@example.com'

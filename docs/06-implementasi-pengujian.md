@@ -6,24 +6,25 @@
 
 ## 1. Stack Teknologi
 
-> Proposal menyebut CodeIgniter secara umum. Implementasi menggunakan versi terbaru (Juni 2026).
-> Lingkungan dev: **hybrid** — PHP di host, MySQL di Docker (setara peran XAMPP tanpa instal XAMPP).
+> Proposal menyebut CodeIgniter secara umum. Implementasi menggunakan versi terbaru (2026).
+> Lingkungan dev: aplikasi berjalan langsung di **host (Windows)**; MySQL memakai server/kontainer existing yang di-expose ke `localhost`.
 
 | Komponen             | Versi        | Catatan                                             |
 | -------------------- | ------------ | --------------------------------------------------- |
-| **PHP**              | 8.3+         | Host (CachyOS); minimum 8.2 (syarat CI4)            |
-| **CodeIgniter**      | 4.7.3        | Framework MVC utama                                 |
-| **MySQL**            | 8.4 LTS      | Docker Compose · `inventory_android`                |
+| **PHP**              | 8.2+         | Host (Windows); minimum 8.2 (syarat CI4)            |
+| **CodeIgniter**      | 4.7          | Framework MVC utama                                 |
+| **MySQL**            | 8.x          | Server/kontainer existing · `db_inventory`          |
 | **Composer**         | 2.x          | Dependency management (host)                        |
 | **Web server (dev)** | PHP built-in | `php spark serve` — pengganti Apache di development |
-| **Dompdf**           | Terbaru      | PDF laporan & transaksi                             |
-| **Resend**           | —            | Email reset password — **API key menyusul**         |
+| **Dompdf**           | 3.x          | PDF laporan & transaksi                             |
 | **Bootstrap**        | 5.3          | UI framework                                        |
 | **Chart.js**         | 4.x          | Grafik dashboard                                    |
+| **PHP-CS-Fixer**     | 3.x          | Code style (dev, dijalankan di CI)                  |
+| **PHPStan**          | 2.x          | Static analysis (dev, dijalankan di CI)             |
 
 ### Ekstensi PHP Wajib
 
-`intl`, `mbstring`, `mysqli` / `pdo_mysql`, `curl`, `gd`, `zip`
+`intl`, `mbstring`, `mysqli` / `pdo_mysql`, `curl`, `gd`, `zip`, `fileinfo`
 
 ### Arsitektur Sistem (Development)
 
@@ -33,86 +34,77 @@ flowchart LR
         Browser[Browser]
         Mobile[Handphone]
     end
-    subgraph host [Host - CachyOS]
+    subgraph host [Host - Windows]
         Spark["php spark serve"]
-        PHP[PHP 8.3+ + CI 4.7]
+        PHP[PHP 8.2+ + CI 4.7]
     end
-    subgraph docker [Docker Compose]
-        MySQL[(MySQL 8.4\ninventory_android)]
-    end
-    subgraph external [External - menyusul]
-        Resend[Resend.com]
+    subgraph db [Server/kontainer existing]
+        MySQL[("MySQL 8.x - db_inventory")]
     end
     Browser --> Spark
     Mobile --> Spark
     Spark --> PHP
     PHP --> MySQL
-    PHP -.-> Resend
 ```
 
 ### Lingkungan & Perintah
 
 ```bash
-# 1. Database
-docker compose up -d
-
-# 2. App (setelah scaffold CI4)
+# 1. Dependensi
 composer install
+
+# 2. Konfigurasi: salin env -> .env, sesuaikan koneksi database
+
+# 3. Migrasi & seed
 php spark migrate
+php spark db:seed AdminSeeder
+
+# 4. Jalankan
 php spark serve --port 8080
-# → http://localhost:8080
+# -> http://localhost:8080
 ```
 
-DB client: CLI `mysql`, DBeaver, TablePlus, dll. (phpMyAdmin tidak dipakai).
+DB client: CLI `mysql`, DBeaver, TablePlus, dll.
 
 ### Pola Aplikasi (CI4)
 
-| Aspek    | Implementasi                                      |
-| -------- | ------------------------------------------------- |
-| Pola     | MVC — Model, View, Controller                     |
-| Auth     | Session + Filter (`AuthFilter`, `RoleFilter`)     |
-| Email    | CI4 Email → Resend SMTP (**belum dikonfigurasi**) |
-| PDF      | Dompdf                                            |
-| Database | Migration + Model · host `127.0.0.1:3306`         |
-| CLI      | `php spark` (migrate, serve, seed)                |
+| Aspek       | Implementasi                                      |
+| ----------- | ------------------------------------------------- |
+| Pola        | MVC — Model, View, Controller                     |
+| Auth        | Session + Filter (`AuthFilter`, `RoleFilter`)     |
+| Audit       | `AuditService` → tabel `activity_logs`            |
+| Email       | CI4 Email (opsional, untuk reset password)        |
+| PDF         | Dompdf                                            |
+| Database    | Migration + Model · host `127.0.0.1:3306`         |
+| CLI         | `php spark` (migrate, serve, seed)                |
+| Kualitas    | PHP-CS-Fixer + PHPStan (CI)                       |
 
 ### Database & Email — Template `.env`
 
-Lihat juga `.env.example` di root repo.
-
-**Docker (root `.env` / `.env.example`):**
-
-```env
-MYSQL_DATABASE=inventory_android
-MYSQL_USER=aswan
-MYSQL_PASSWORD=Samunu123
-MYSQL_ROOT_PASSWORD=Samunu123
-```
-
-Container: **`mysql`** · port: **`127.0.0.1:3306:3306`** (hanya localhost, sama pola postgres).
-
-**CodeIgniter (setelah scaffold, `app/.env`):**
+Salin file `env` → `.env`, lalu sesuaikan koneksi. Gunakan `127.0.0.1` (bukan `localhost`) agar driver MySQLi memakai koneksi TCP. Kredensial nyata tidak di-commit.
 
 ```ini
+app_baseURL = 'http://localhost:8080'
+
 database.default.hostname = 127.0.0.1
-database.default.database = inventory_android
-database.default.username = aswan
-database.default.password = Samunu123
+database.default.database = db_inventory
+database.default.username = <user>
+database.default.password = <password>
 database.default.DBDriver = MySQLi
 database.default.port = 3306
 
-# Email / Resend — menyusul
-# email.fromEmail = noreply@TBD_DOMAIN
-# email.fromName  = Android Service Inventory
-# email.SMTPHost  = smtp.resend.com
-# email.SMTPUser  = resend
-# email.SMTPPass  = TBD_RESEND_API_KEY
-# email.SMTPPort  = 587
-# email.SMTPCrypto = tls
-# auth.resetTokenTTL = 3600
-```
+# Password admin awal untuk AdminSeeder
+admin.defaultPassword = '<password_admin>'
 
-> Fitur reset password via email ditunda sampai Resend siap.
+# Email (opsional) — untuk fitur reset password
+# email.fromEmail  = noreply@contoh.com
+# email.fromName   = Android Service Inventory
+# email.SMTPHost   = <smtp_host>
+# email.SMTPUser   = <smtp_user>
+# email.SMTPPass   = <smtp_pass>
+# email.SMTPPort   = 587
+# email.SMTPCrypto = tls
+```
 
 ---
 
@@ -132,9 +124,11 @@ database.default.port = 3306
 ### Keamanan
 
 - Session-based authentication (CI4 Session)
-- Password: `password_hash` PHP 8.3+
+- Password: `password_hash` (bcrypt) PHP 8.2+
 - Route terproteksi: `AuthFilter`, `RoleFilter`
 - Reset password: token sekali pakai, TTL 60 menit
+- Audit trail: aktivitas pengguna dicatat ke `activity_logs`
+- Unggah foto: validasi tipe (JPG/PNG/WebP) & ukuran (≤ 2 MB)
 - Validasi server-side (CI4 Validation)
 - CSRF protection pada form
 
@@ -177,6 +171,14 @@ Metode: input → observasi output, tanpa inspeksi kode internal.
 | 22  | Keluar        | Edit transaksi (admin)   | Ubah qty                       | Stok ter-recalculate                                                |
 | 23  | Keluar        | Edit (karyawan)          | Akses form edit                | Ditolak                                                             |
 | 24  | Laporan       | On-the-fly               | Filter periode                 | PDF sesuai DB saat ini                                              |
+| 25  | Profil        | Ubah data diri           | Nama/email/telepon valid       | Data tersimpan, nama di topbar berubah                              |
+| 26  | Profil        | Email sudah dipakai      | Email milik user lain          | Error validasi, ditolak                                             |
+| 27  | Profil        | Ganti password           | Password lama benar + baru     | Password terganti, bisa login dgn password baru                    |
+| 28  | Profil        | Ganti password salah     | Password lama salah            | Error "Password lama tidak sesuai"                                  |
+| 29  | Profil        | Unggah foto              | JPG/PNG/WebP ≤ 2 MB            | Foto tersimpan & tampil sebagai avatar                              |
+| 30  | Profil        | Unggah foto invalid      | Bukan gambar / > 2 MB          | Error validasi, ditolak                                             |
+| 31  | Profil        | Hapus foto               | Klik hapus foto                | Foto terhapus, avatar kembali ke inisial                           |
+| 32  | Audit trail   | Aksi tercatat            | Login/CRUD/logout              | Baris tercatat di `activity_logs`                                   |
 
 ---
 
@@ -186,12 +188,14 @@ Metode: input → observasi output, tanpa inspeksi kode internal.
 
 | Fase                       | Task                                            | Status           |
 | -------------------------- | ----------------------------------------------- | ---------------- |
-| **1. Setup**               | Docker MySQL, CI4.7, `.env`, migration, seed    | Done             |
-| **2. Auth**                | Login, logout, Filter, lupa password (stub log) | Done             |
-| **3. Master Data**         | CRUD sparepart, aksesoris, supplier, pengguna   | Done             |
+| **1. Setup**               | Koneksi MySQL, CI4.7, `.env`, migration, seed   | Done             |
+| **2. Auth**                | Login, logout, Filter, lupa password            | Done             |
+| **3. Master Data**         | CRUD sparepart, aksesori, supplier, pengguna    | Done             |
 | **4. Transaksi**           | Barang masuk/keluar, auto stok, penomoran, PDF  | Done             |
-| **5. Dashboard & Laporan** | Chart.js, monitoring stok, Dompdf laporan       | Done             |
-| **6. Testing**             | UI responsif, black box lengkap                 | Manual / ongoing |
+| **5. Dashboard & Laporan** | Chart.js (6 KPI), monitoring stok, Dompdf       | Done             |
+| **6. Profil & Audit**      | Profil + foto, ganti password, `activity_logs`  | Done             |
+| **7. Kualitas Kode**       | PHP-CS-Fixer + PHPStan di CI                    | Done             |
+| **8. Testing**             | UI responsif, black box lengkap                 | Manual / ongoing |
 
 ```mermaid
 flowchart LR
@@ -199,5 +203,7 @@ flowchart LR
     F2 --> F3[Master Data]
     F3 --> F4[Transaksi]
     F4 --> F5[Dashboard]
-    F5 --> F6[Testing]
+    F5 --> F6[Profil & Audit]
+    F6 --> F7[Kualitas Kode]
+    F7 --> F8[Testing]
 ```

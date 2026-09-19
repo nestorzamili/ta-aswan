@@ -32,5 +32,9 @@ COPY --from=builder --chown=www-data:www-data /app /var/www/html
 RUN chown -R www-data:www-data /var/www/html/writable \
   && chmod -R 775 /var/www/html/writable
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 80
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

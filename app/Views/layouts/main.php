@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= esc($title ?? 'Dashboard') ?> · Android Service</title>
-    <meta name="description" content="Sistem inventory sparepart dan aksesoris Toko Android Service — monitoring stok, transaksi, dan laporan.">
+    <title><?= esc($title ?? 'Dashboard') ?> | Android Service</title>
+    <meta name="description" content="Sistem inventory sparepart dan aksesori Toko Android Service — monitoring stok, transaksi, dan laporan.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
@@ -69,8 +69,8 @@ $flashSuccess     = session()->getFlashdata('success');
         <a class="nav-link <?= $isActive('sparepart') ?>" href="<?= site_url('sparepart') ?>" data-tooltip="Sparepart">
             <i class="bi bi-cpu"></i> <span>Sparepart</span>
         </a>
-        <a class="nav-link <?= $isActive('aksesoris') ?>" href="<?= site_url('aksesoris') ?>" data-tooltip="Aksesoris">
-            <i class="bi bi-earbuds"></i> <span>Aksesoris</span>
+        <a class="nav-link <?= $isActive('aksesoris') ?>" href="<?= site_url('aksesoris') ?>" data-tooltip="Aksesori">
+            <i class="bi bi-earbuds"></i> <span>Aksesori</span>
         </a>
         <a class="nav-link <?= $isActive('supplier') ?>" href="<?= site_url('supplier') ?>" data-tooltip="Supplier">
             <i class="bi bi-building"></i> <span>Supplier</span>
@@ -97,13 +97,6 @@ $flashSuccess     = session()->getFlashdata('success');
             </a>
         <?php endif; ?>
     </nav>
-
-    <form action="<?= site_url('logout') ?>" method="POST" class="nav-logout-form mt-auto">
-        <?= csrf_field() ?>
-        <button type="submit" class="nav-link nav-logout border-0 bg-transparent w-100 text-start" data-tooltip="Keluar">
-            <i class="bi bi-box-arrow-left"></i> <span>Keluar</span>
-        </button>
-    </form>
 </aside>
 
 <div class="main-wrap">
@@ -119,10 +112,45 @@ $flashSuccess     = session()->getFlashdata('success');
         </div>
         <div class="topbar-meta">
             <span class="topbar-clock" id="clock" title="Waktu browser"><?= date('d M Y · H:i') ?></span>
-            <span class="user-chip">
-                <span class="avatar" aria-hidden="true"><?= esc($initials) ?></span>
-                <span class="user-name"><?= esc(session('nama')) ?></span>
-            </span>
+            <div class="dropdown">
+                <button type="button" class="user-chip btn border-0 bg-transparent p-0" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <?php $topbarFoto = avatar_url(session('foto')); ?>
+                    <?php if ($topbarFoto !== null): ?>
+                        <span class="avatar avatar-img" aria-hidden="true"><img src="<?= esc($topbarFoto) ?>" alt="Foto profil"></span>
+                    <?php else: ?>
+                        <span class="avatar" aria-hidden="true"><?= esc($initials) ?></span>
+                    <?php endif; ?>
+                    <span class="user-name"><?= esc(session('nama')) ?></span>
+                    <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end user-menu" aria-labelledby="userMenuToggle">
+                    <li class="user-menu-head">
+                        <?php if ($topbarFoto !== null): ?>
+                            <span class="user-menu-avatar avatar-img" aria-hidden="true"><img src="<?= esc($topbarFoto) ?>" alt="Foto profil"></span>
+                        <?php else: ?>
+                            <span class="user-menu-avatar" aria-hidden="true"><?= esc($initials) ?></span>
+                        <?php endif; ?>
+                        <span class="user-menu-info">
+                            <span class="user-menu-name"><?= esc(session('nama')) ?></span>
+                            <span class="user-menu-role"><?= esc(session('level') === 'admin' ? 'Administrator' : 'Karyawan') ?></span>
+                        </span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="<?= site_url('profil') ?>">
+                            <i class="bi bi-person-circle" aria-hidden="true"></i> Profil
+                        </a>
+                    </li>
+                    <li>
+                        <form action="<?= site_url('logout') ?>" method="POST" class="m-0">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="dropdown-item">
+                                <i class="bi bi-box-arrow-left" aria-hidden="true"></i> Keluar
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
 
@@ -131,7 +159,7 @@ $flashSuccess     = session()->getFlashdata('success');
     </main>
 
     <footer class="app-footer">
-        Inventory sparepart &amp; aksesoris · Toko Android Service · <?= date('Y') ?>
+        Inventory sparepart &amp; aksesori | Toko Android Service | <?= date('Y') ?>
     </footer>
 </div>
 

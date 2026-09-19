@@ -78,6 +78,8 @@ class BarangKeluarController extends BaseController
             ], $e->getMessage());
         }
 
+        log_activity('create', 'barang_keluar', $id, 'Menambah barang keluar #' . $id);
+
         return redirect()->to(self::ROUTE_PREFIX . $id)->with('success', 'Barang keluar disimpan. Stok diperbarui.');
     }
 
@@ -126,6 +128,7 @@ class BarangKeluarController extends BaseController
                 'tanggal_keluar' => $this->parseDateFilter($this->request->getPost('tanggal_keluar')) ?: date('Y-m-d'),
                 'tujuan'         => trim((string) $this->request->getPost('tujuan')),
             ], $lines);
+            log_activity('update', 'barang_keluar', (int) $id, 'Mengubah barang keluar #' . $id);
             $response = redirect()->to(self::ROUTE_PREFIX . $id)->with('success', 'Transaksi keluar diperbarui.');
         } catch (Throwable $e) {
             $response = $this->redirectWithFieldErrors($editUrl, [
@@ -163,6 +166,8 @@ class BarangKeluarController extends BaseController
         } catch (Throwable $e) {
             return redirect()->to(self::ROUTE_INDEX)->with('error', $e->getMessage());
         }
+
+        log_activity('delete', 'barang_keluar', (int) $id, 'Menghapus barang keluar #' . $id);
 
         return redirect()->to(self::ROUTE_INDEX)->with('success', 'Transaksi dihapus. Stok dikembalikan.');
     }

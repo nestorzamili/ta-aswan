@@ -10,10 +10,10 @@
             <div class="kpi-hint">SKU aktif</div>
         </div>
     </a>
-    <a class="kpi-card" href="<?= site_url('aksesoris') ?>" aria-busy="true" aria-label="Lihat data aksesoris">
+    <a class="kpi-card" href="<?= site_url('aksesoris') ?>" aria-busy="true" aria-label="Lihat data aksesori">
         <div class="kpi-icon is-warm" aria-hidden="true"><i class="bi bi-earbuds"></i></div>
         <div class="kpi-body">
-            <div class="kpi-label">Aksesoris</div>
+            <div class="kpi-label">Aksesori</div>
             <div class="kpi-value skeleton-text" id="kpiAk">    </div>
             <div class="kpi-hint">SKU aktif</div>
         </div>
@@ -32,9 +32,25 @@
     <a class="kpi-card" href="<?= site_url('barang-masuk') ?>" aria-busy="true" aria-label="Lihat transaksi barang masuk">
         <div class="kpi-icon is-ink" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></div>
         <div class="kpi-body">
-            <div class="kpi-label">Transaksi bulan ini</div>
+            <div class="kpi-label">Transaksi 14 hari</div>
             <div class="kpi-value skeleton-text" id="kpiTrx">    </div>
             <div class="kpi-hint">Masuk + keluar</div>
+        </div>
+    </a>
+    <div class="kpi-card" aria-busy="true">
+        <div class="kpi-icon is-ok" aria-hidden="true"><i class="bi bi-cash-stack"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-label">Nilai persediaan</div>
+            <div class="kpi-value skeleton-text" id="kpiNilai">    </div>
+            <div class="kpi-hint">Stok × harga beli</div>
+        </div>
+    </div>
+    <a class="kpi-card" href="<?= site_url('supplier') ?>" aria-busy="true" aria-label="Lihat data supplier">
+        <div class="kpi-icon is-warm" aria-hidden="true"><i class="bi bi-building"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-label">Total supplier</div>
+            <div class="kpi-value skeleton-text" id="kpiSupplier">    </div>
+            <div class="kpi-hint">Supplier aktif</div>
         </div>
     </a>
 </div>

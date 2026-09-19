@@ -47,6 +47,8 @@ Toko Android Service bergerak di bidang perbaikan perangkat Android serta penjua
 - Pengelolaan data **supplier**
 - Pembuatan **laporan inventory** (stok, barang masuk, barang keluar)
 - Manajemen **pengguna** (level `admin` & `karyawan`) dan autentikasi
+- **Profil pengguna** (ubah data diri, foto profil, ganti password mandiri)
+- **Audit trail** aktivitas pengguna (create/update/delete + login/logout)
 - Reset password via **email**
 - Dashboard ringkasan inventory
 
@@ -60,11 +62,12 @@ Toko Android Service bergerak di bidang perbaikan perangkat Android serta penjua
 
 | Batasan            | Nilai                                    |
 | ------------------ | ---------------------------------------- |
-| Bahasa pemrograman | PHP 8.3+ (host)                          |
-| Framework          | CodeIgniter 4.7.3                        |
-| Database           | MySQL 8.4 · `inventory_android` (Docker) |
+| Bahasa pemrograman | PHP 8.2+ (host)                          |
+| Framework          | CodeIgniter 4.7                          |
+| Database           | MySQL 8.x · `db_inventory`               |
 | Package manager    | Composer 2.x                             |
 | Server lokal       | `php spark serve` (PHP built-in server)  |
+| Sistem operasi dev | Windows (Laragon / XAMPP)                |
 | Model pengembangan | Prototyping                              |
 
 Detail stack lengkap: [06-implementasi-pengujian.md](06-implementasi-pengujian.md).
@@ -89,7 +92,7 @@ flowchart TD
 | 2. Membangun prototype   | Desain UI + alur sistem                                   | Mockup / prototype awal    |
 | 3. Evaluasi prototype    | Review oleh admin toko                                    | Masukan & daftar perbaikan |
 | 4. Perbaikan prototype   | Iterasi berdasarkan masukan                               | Prototype revisi           |
-| 5. Implementasi          | Coding PHP 8.3 + CI4 + MySQL 8.4                          | Aplikasi berjalan          |
+| 5. Implementasi          | Coding PHP 8.2+ + CI4 + MySQL 8.x                         | Aplikasi berjalan          |
 | 6. Verification          | Black box testing                                         | Laporan uji                |
 | 7. Maintenance           | Perbaikan & penyesuaian                                   | Sistem stabil              |
 
