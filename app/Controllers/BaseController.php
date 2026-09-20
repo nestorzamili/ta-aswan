@@ -106,27 +106,27 @@ abstract class BaseController extends Controller
         return (int) preg_replace('/\D/', '', $raw);
     }
 
-    protected function pdfResponse(string $binary, ?string $filename = null): ResponseInterface
+    protected function pdfResponse(string $binary, ?string $filename = null, bool $attachment = false): ResponseInterface
     {
-        $response = $this->response
-            ->setHeader('Content-Type', 'application/pdf')
-            ->setBody($binary);
-
-        if ($filename !== null && $filename !== '') {
-            $safe = preg_replace('/[^A-Za-z0-9._-]+/', '-', $filename) ?? 'dokumen.pdf';
-            $safe = trim($safe, '-.');
-            if ($safe === '') {
-                $safe = 'dokumen.pdf';
-            }
-            if (! str_ends_with(strtolower($safe), '.pdf')) {
-                $safe .= '.pdf';
-            }
-            $response->setHeader(
-                'Content-Disposition',
-                'inline; filename="' . $safe . '"',
-            );
+        $safe = preg_replace('/[^A-Za-z0-9._-]+/', '-', $filename ?? 'dokumen.pdf') ?? 'dokumen.pdf';
+        $safe = trim($safe, '-.');
+        if ($safe === '') {
+            $safe = 'dokumen.pdf';
+        }
+        if (! str_ends_with(strtolower($safe), '.pdf')) {
+            $safe .= '.pdf';
         }
 
-        return $response;
+        $isDownload  = $attachment || (bool) $this->request->getGet('download');
+        $disposition = $isDownload ? 'attachment' : 'inline';
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', $disposition . '; filename="' . $safe . '"')
+            ->setHeader('Content-Length', (string) strlen($binary))
+            ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate')
+            ->setHeader('Pragma', 'public')
+            ->setHeader('Accept-Ranges', 'none')
+            ->setBody($binary);
     }
 }

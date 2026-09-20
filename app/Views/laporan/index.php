@@ -4,8 +4,7 @@
     <div class="card-body">
         <div class="form-section">
             <h2 class="form-section-title">Laporan PDF</h2>
-            <form method="post" action="<?= site_url('laporan/pdf') ?>" target="_blank" rel="noopener">
-                <?= csrf_field() ?>
+            <form method="get" action="<?= site_url('laporan/pdf') ?>" target="_blank" rel="noopener">
                 <div class="mb-3">
                     <label class="form-label" for="jenis">Jenis laporan <span class="req" title="Wajib">*</span></label>
                     <select name="jenis" id="jenis" class="form-select" required>

@@ -60,7 +60,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('supplier/(:num)', 'SupplierController::show/$1');
 
     $routes->get('laporan', 'LaporanController::index');
-    $routes->post('laporan/pdf', 'LaporanController::pdf');
+    $routes->match(['get', 'post'], 'laporan/pdf', 'LaporanController::pdf');
 
     $routes->get('profil', 'ProfileController::index');
     $routes->post('profil', 'ProfileController::update');

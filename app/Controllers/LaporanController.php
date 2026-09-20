@@ -11,14 +11,16 @@ class LaporanController extends BaseController
 
     public function pdf()
     {
-        $jenis   = (string) $this->request->getPost('jenis');
+        $jenis   = (string) ($this->request->getGet('jenis') ?? $this->request->getPost('jenis'));
         $allowed = ['stok', 'masuk', 'keluar'];
         if (! in_array($jenis, $allowed, true)) {
             return redirect()->to('/laporan')->with('error', 'Jenis laporan tidak valid.');
         }
 
-        $awal  = $this->parseDateFilter($this->request->getPost('tanggal_awal')) ?: date('Y-m-01');
-        $akhir = $this->parseDateFilter($this->request->getPost('tanggal_akhir')) ?: date('Y-m-d');
+        $rawAwal  = (string) ($this->request->getGet('tanggal_awal') ?? $this->request->getPost('tanggal_awal'));
+        $rawAkhir = (string) ($this->request->getGet('tanggal_akhir') ?? $this->request->getPost('tanggal_akhir'));
+        $awal     = $this->parseDateFilter($rawAwal) ?: date('Y-m-01');
+        $akhir    = $this->parseDateFilter($rawAkhir) ?: date('Y-m-d');
         if (strtotime($awal) > strtotime($akhir)) {
             [$awal, $akhir] = [$akhir, $awal];
         }
