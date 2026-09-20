@@ -98,8 +98,8 @@ foreach ($items as $row):
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="<?= site_url($routePrefix . $row['id_masuk'] . '/pdf') ?>" target="_blank" rel="noopener">
-                                        <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
+                                    <a class="dropdown-item" href="<?= site_url($routePrefix . $row['id_masuk'] . '/pdf') ?>">
+                                        <i class="bi bi-file-earmark-pdf"></i> Unduh PDF
                                     </a>
                                 </li>
                                 <?php if (session('level') === 'admin'): ?>

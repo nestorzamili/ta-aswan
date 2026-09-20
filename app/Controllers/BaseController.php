@@ -106,7 +106,7 @@ abstract class BaseController extends Controller
         return (int) preg_replace('/\D/', '', $raw);
     }
 
-    protected function pdfResponse(string $binary, ?string $filename = null, bool $attachment = false): ResponseInterface
+    protected function pdfResponse(string $binary, ?string $filename = null, bool $attachment = true): ResponseInterface
     {
         $safe = preg_replace('/[^A-Za-z0-9._-]+/', '-', $filename ?? 'dokumen.pdf') ?? 'dokumen.pdf';
         $safe = trim($safe, '-.');
@@ -117,8 +117,8 @@ abstract class BaseController extends Controller
             $safe .= '.pdf';
         }
 
-        $isDownload  = $attachment || (bool) $this->request->getGet('download');
-        $disposition = $isDownload ? 'attachment' : 'inline';
+        $isInline    = (bool) $this->request->getGet('preview');
+        $disposition = ($attachment && ! $isInline) ? 'attachment' : 'inline';
 
         return $this->response
             ->setHeader('Content-Type', 'application/pdf')

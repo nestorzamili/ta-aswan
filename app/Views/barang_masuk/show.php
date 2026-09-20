@@ -3,8 +3,8 @@
 <div class="page-toolbar">
     <div class="d-flex gap-2 flex-wrap">
         <a href="<?= site_url('barang-masuk') ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
-        <a href="<?= site_url('barang-masuk/' . $header['id_masuk'] . '/pdf') ?>" class="btn btn-primary" target="_blank" rel="noopener">
-            <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
+        <a href="<?= site_url('barang-masuk/' . $header['id_masuk'] . '/pdf') ?>" class="btn btn-primary">
+            <i class="bi bi-file-earmark-pdf"></i> Unduh PDF
         </a>
     </div>
 </div>

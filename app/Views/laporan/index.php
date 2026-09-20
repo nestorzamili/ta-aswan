@@ -4,7 +4,7 @@
     <div class="card-body">
         <div class="form-section">
             <h2 class="form-section-title">Laporan PDF</h2>
-            <form method="get" action="<?= site_url('laporan/pdf') ?>" target="_blank" rel="noopener">
+            <form method="get" action="<?= site_url('laporan/pdf') ?>">
                 <div class="mb-3">
                     <label class="form-label" for="jenis">Jenis laporan <span class="req" title="Wajib">*</span></label>
                     <select name="jenis" id="jenis" class="form-select" required>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="form-actions">
                     <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-file-earmark-pdf"></i> Generate PDF
+                        <i class="bi bi-download"></i> Unduh PDF
                     </button>
                 </div>
             </form>

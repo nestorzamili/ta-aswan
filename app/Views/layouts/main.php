@@ -113,7 +113,7 @@ $flashSuccess     = session()->getFlashdata('success');
         <div class="topbar-meta">
             <span class="topbar-clock" id="clock" title="Waktu browser"><?= date('d M Y · H:i') ?></span>
             <div class="dropdown">
-                <button type="button" class="user-chip btn border-0 bg-transparent p-0" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <button type="button" class="user-chip btn" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <?php $topbarFoto = avatar_url(session('foto')); ?>
                     <?php if ($topbarFoto !== null): ?>
                         <span class="avatar avatar-img" aria-hidden="true"><img src="<?= esc($topbarFoto) ?>" alt="Foto profil"></span>
@@ -144,7 +144,7 @@ $flashSuccess     = session()->getFlashdata('success');
                     <li>
                         <form action="<?= site_url('logout') ?>" method="POST" class="m-0">
                             <?= csrf_field() ?>
-                            <button type="submit" class="dropdown-item">
+                            <button type="submit" class="dropdown-item dropdown-item-danger">
                                 <i class="bi bi-box-arrow-left" aria-hidden="true"></i> Keluar
                             </button>
                         </form>
